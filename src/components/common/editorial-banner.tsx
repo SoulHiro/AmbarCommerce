@@ -49,7 +49,7 @@ export function EditorialBanner({
 
       {/* Camada absoluta full-width → InnerContainer alinha ao grid da página */}
       <div className="absolute inset-0 flex flex-col justify-end pt-10 pb-14">
-        <InnerContainer>
+        <InnerContainer className="w-full">
           <div
             className={isRight ? 'ml-auto max-w-sm text-right' : 'mr-auto max-w-sm text-left'}
           >
