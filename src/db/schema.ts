@@ -3,9 +3,11 @@ import {
   boolean,
   index,
   integer,
+  pgEnum,
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core'
@@ -86,6 +88,7 @@ export const userRelations = relations(userTable, ({ many, one }) => ({
   sessions: many(sessionTable),
   accounts: many(accountTable),
   shippingAddresses: many(shippingAddressTable),
+  wishlist: many(wishlistTable),
   cart: one(cartTable, {
     fields: [userTable.id],
     references: [cartTable.userId],
@@ -117,11 +120,14 @@ export const categoryRelations = relations(categoryTable, ({ many }) => ({
   products: many(productTable),
 }))
 
+export const genderEnum = pgEnum('gender', ['feminino', 'masculino', 'unissex'])
+
 export const productTable = pgTable('product', {
   id: uuid().primaryKey().defaultRandom(),
   categoryId: uuid('category_id')
     .notNull()
     .references(() => categoryTable.id),
+  gender: genderEnum('gender').notNull().default('unissex'),
   name: text().notNull(),
   slug: text().notNull().unique(),
   description: text().notNull(),
@@ -134,6 +140,7 @@ export const productRelations = relations(productTable, ({ one, many }) => ({
     references: [categoryTable.id],
   }),
   variants: many(productVariantTable),
+  wishlist: many(wishlistTable),
 }))
 
 export const productVariantTable = pgTable('product_variant', {
@@ -144,6 +151,7 @@ export const productVariantTable = pgTable('product_variant', {
   name: text().notNull(),
   slug: text().notNull().unique(),
   color: text().notNull(),
+  size: text('size'),
   priceInCents: integer('price_in_cents').notNull(),
   imageUrl: text('image_url').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
@@ -159,6 +167,32 @@ export const productVariantRelations = relations(
   })
 )
 
+export const wishlistTable = pgTable(
+  'wishlist',
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => userTable.id, { onDelete: 'cascade' }),
+    productId: uuid('product_id')
+      .notNull()
+      .references(() => productTable.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('wishlist_user_product_idx').on(t.userId, t.productId)]
+)
+
+export const wishlistRelations = relations(wishlistTable, ({ one }) => ({
+  user: one(userTable, {
+    fields: [wishlistTable.userId],
+    references: [userTable.id],
+  }),
+  product: one(productTable, {
+    fields: [wishlistTable.productId],
+    references: [productTable.id],
+  }),
+}))
+
 export const shippingAddressTable = pgTable('shipping_address', {
   id: uuid().primaryKey().defaultRandom(),
   userId: text('user_id')
@@ -169,7 +203,6 @@ export const shippingAddressTable = pgTable('shipping_address', {
   taxId: varchar('tax_id', { length: 32 }).notNull(),
   recipientName: text().notNull(),
 
-  // Endereço
   country: text().notNull(),
   zipCode: text().notNull(),
   state: text().notNull(),
