@@ -2,6 +2,7 @@ import { productTable, productVariantTable } from '@/db/schema'
 import { formatCentsToBRL } from '@/helpers/money'
 import Image from 'next/image'
 import Link from 'next/link'
+import { FavoriteButton } from './favorite-button'
 
 interface ProductsItemProps {
   product: typeof productTable.$inferSelect & {
@@ -15,7 +16,7 @@ export const ProductItem = ({ product }: ProductsItemProps) => {
   if (!firstVariant) return null
 
   return (
-    <Link href={`/products/${product.id}`} className="group flex flex-col">
+    <Link href={`/products/${product.id}`} className="group relative flex flex-col">
       <div className="relative aspect-[3/4] w-full overflow-hidden bg-muted">
         <Image
           src={firstVariant.imageUrl}
@@ -24,6 +25,7 @@ export const ProductItem = ({ product }: ProductsItemProps) => {
           className="object-cover transition-transform duration-500 group-hover:scale-105"
           sizes="(max-width: 768px) 50vw, 25vw"
         />
+        <FavoriteButton />
       </div>
 
       <div className="mt-3 flex flex-col gap-1">

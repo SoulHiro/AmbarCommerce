@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { ProductItem } from './products-item'
 
 interface ProductsListProps {
-  title: string
+  title?: string
   products: (typeof productTable.$inferSelect & {
     variants: (typeof productVariantTable.$inferSelect)[]
   })[]
@@ -22,17 +22,19 @@ export const ProductList = ({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="font-heading text-lg font-semibold">{title}</h3>
-        {seeAllHref && (
-          <Link
-            href={seeAllHref}
-            className="text-muted-foreground hover:text-foreground text-sm transition-colors"
-          >
-            Ver todos
-          </Link>
-        )}
-      </div>
+      {(title || seeAllHref) && (
+        <div className="flex items-center justify-between">
+          {title && <h3 className="font-heading text-lg font-semibold">{title}</h3>}
+          {seeAllHref && (
+            <Link
+              href={seeAllHref}
+              className="text-muted-foreground hover:text-foreground ml-auto text-sm transition-colors"
+            >
+              Compre agora
+            </Link>
+          )}
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-x-3 gap-y-8 md:grid-cols-4">
         {visibleProducts.map((product) => (
