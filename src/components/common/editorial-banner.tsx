@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils'
 import Image from 'next/image'
 import Link from 'next/link'
 import { InnerContainer } from './page-container'
@@ -9,6 +10,8 @@ interface EditorialBannerProps {
   href?: string
   linkLabel?: string
   align?: 'left' | 'right'
+  className?: string
+  priority?: boolean
 }
 
 export function EditorialBanner({
@@ -18,15 +21,18 @@ export function EditorialBanner({
   href = '/products',
   linkLabel = 'Explorar coleção',
   align = 'left',
+  className,
+  priority = false,
 }: EditorialBannerProps) {
   const isRight = align === 'right'
 
   return (
-    <section className="bg-muted relative min-h-[520px] overflow-hidden">
+    <section className={cn('bg-muted relative min-h-[520px] overflow-hidden', className)}>
       <Image
         src={image}
         alt={title}
         fill
+        priority={priority}
         className="object-cover object-center"
         sizes="100vw"
       />

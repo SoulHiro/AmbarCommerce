@@ -5,7 +5,6 @@ import { EditorialBanner } from '@/components/common/editorial-banner'
 import { Footer } from '@/components/common/footer'
 import { ProductList } from '@/components/common/products-list'
 import { db } from '@/db'
-import Image from 'next/image'
 
 const CATEGORIES: Category[] = [
   { name: 'Novidades', image: '/images/banner.webp', href: '/products?category=novidades' },
@@ -24,13 +23,13 @@ export default async function Home() {
       <Header />
 
       {/* Hero banner */}
-      <Image
-        src="/images/banner.webp"
-        alt="Coleção Âmbar — Outono 2025"
-        width={0}
-        height={0}
-        sizes="100vw"
-        className="h-auto w-full"
+      <EditorialBanner
+        image="/images/banner.webp"
+        eyebrow="Coleção Outono 2025"
+        title="Curadoria para quem veste com intenção"
+        href="/products"
+        linkLabel="Explorar a coleção"
+        className="min-h-[600px] md:min-h-[720px]"
         priority
       />
 
