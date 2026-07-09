@@ -5,80 +5,20 @@ import { authClient } from '@/lib/auth-client'
 import {
   HeartIcon,
   HistoryIcon,
-  LogInIcon,
   MapPinIcon,
-  MenuIcon,
   SearchIcon,
   ShoppingBagIcon,
   UserIcon,
 } from 'lucide-react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useRef, useState } from 'react'
-import { Button } from '../ui/button'
 import { Logo } from '../brand/logo'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet'
 import { InnerContainer } from './page-container'
-
-// ─── Types ───────────────────────────────────────────────────────────────────
-interface NavColumn { title: string; items: string[] }
-interface NavCategory {
-  label: string
-  columns: NavColumn[]
-  spotlight: { image: string; badge: string; title: string }
-}
-
-// ─── Static data ─────────────────────────────────────────────────────────────
-const NAV_CATEGORIES: NavCategory[] = [
-  {
-    label: 'Novidades',
-    columns: [
-      { title: 'Roupas', items: ['Vestidos', 'Blusas', 'Calças', 'Saias', 'Jaquetas'] },
-      { title: 'Calçados', items: ['Sandálias', 'Botas', 'Mocassins', 'Oxford'] },
-      { title: 'Acessórios', items: ['Bolsas', 'Cintos', 'Bijuterias', 'Lenços'] },
-    ],
-    spotlight: { image: '/images/banner.webp', badge: 'Destaque', title: 'Coleção Outono 2025' },
-  },
-  {
-    label: 'Férias',
-    columns: [
-      { title: 'Praia', items: ['Biquínis', 'Saídas de Praia', 'Camisas de Linho'] },
-      { title: 'Cidade', items: ['Vestidos Leves', 'Sandálias Planas', 'Óculos de Sol'] },
-      { title: 'Malas & Bolsas', items: ['Sacolas', 'Mochilas', 'Nécessaires'] },
-    ],
-    spotlight: { image: '/images/banner.webp', badge: 'Destaque', title: 'Verão que não acaba' },
-  },
-  {
-    label: 'Outono',
-    columns: [
-      { title: 'Casacos', items: ['Trench Coats', 'Blazers', 'Cardigans', 'Parkas'] },
-      { title: 'Malharia', items: ['Suéteres', 'Cachecóis', 'Luvas', 'Gorros'] },
-      { title: 'Calçados', items: ['Botas de Cano Alto', 'Chelsea', 'Loafers'] },
-    ],
-    spotlight: { image: '/images/banner.webp', badge: 'Destaque', title: 'Lã, couro e cognac' },
-  },
-  {
-    label: 'Básicos',
-    columns: [
-      { title: 'Feminino', items: ['Camisetas', 'Regatas', 'Calças Retas', 'Leggings'] },
-      { title: 'Masculino', items: ['Polos', 'Camisetas Brancas', 'Chinos'] },
-      { title: 'Unissex', items: ['Moletons', 'Jeans', 'Tênis Brancos'] },
-    ],
-    spotlight: { image: '/images/banner.webp', badge: 'Destaque', title: 'O armário que nunca erra' },
-  },
-  {
-    label: 'Sale',
-    columns: [
-      { title: 'Até 30% off', items: ['Blusas', 'Saias', 'Acessórios'] },
-      { title: 'Até 50% off', items: ['Jaquetas', 'Calçados', 'Bolsas'] },
-      { title: 'Até 70% off', items: ['Peças únicas', 'Últimas unidades'] },
-    ],
-    spotlight: { image: '/images/banner.webp', badge: 'Destaque', title: 'Até 70% de desconto' },
-  },
-]
-
-const GENDER_LINKS = ['Mulher', 'Homem', 'Crianças']
+import { CartSheet } from './cart'
+import { MobileSheet } from './mobile-sheet'
+import { MegaMenu } from './mega-menu'
+import { NAV_CATEGORIES, GENDER_LINKS } from '@/data/navigation'
 
 const PROFILE_MENU = [
   { label: 'Histórico de pedidos', icon: HistoryIcon, href: '/orders' },
@@ -229,104 +169,14 @@ export default function Header() {
               className="text-muted-foreground transition-colors hover:text-foreground">
               <ShoppingBagIcon className="h-5 w-5" strokeWidth={1.5} />
             </button>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <MenuIcon className="h-4 w-4" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent>
-                <SheetHeader><SheetTitle>Menu</SheetTitle></SheetHeader>
-                <nav className="flex flex-col gap-1 px-8">
-                  {NAV_CATEGORIES.map(cat => (
-                    <Link key={cat.label} href="#"
-                      className="py-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
-                      {cat.label}
-                    </Link>
-                  ))}
-                  <div className="my-3 border-t border-border" />
-                  {GENDER_LINKS.map(label => (
-                    <Link key={label} href="#"
-                      className="py-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
-                      {label}
-                    </Link>
-                  ))}
-                </nav>
-              </SheetContent>
-            </Sheet>
+            <MobileSheet />
           </div>
         </InnerContainer>
 
-        {/* ── Mega menu — full-width, fora do InnerContainer ─── */}
-        <div
-          className={cn(
-            'absolute left-0 right-0 top-full hidden border-b border-border bg-background shadow-sm md:block',
-            'motion-safe:transition-[opacity,transform] motion-safe:duration-[180ms] motion-safe:ease-out',
-            activeCategory
-              ? 'pointer-events-auto translate-y-0 opacity-100'
-              : 'pointer-events-none -translate-y-1 opacity-0',
-          )}
-          aria-hidden={!activeCategory}
-        >
-          {displayData && (
-            <InnerContainer className="flex py-10">
-              <div className="flex flex-1 gap-16">
-                {displayData.columns.map(col => (
-                  <div key={col.title} className="flex min-w-0 flex-col gap-4">
-                    <span className="text-[0.65rem] font-semibold uppercase tracking-widest text-foreground">
-                      {col.title}
-                    </span>
-                    <ul className="flex flex-col gap-3">
-                      {col.items.map(item => (
-                        <li key={item}>
-                          <Link href="#" tabIndex={activeCategory ? 0 : -1}
-                            className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-                            {item}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-              <div className="flex w-72 flex-shrink-0 flex-col border-l border-border pl-10">
-                <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
-                  <Image src={displayData.spotlight.image} alt={displayData.spotlight.title}
-                    fill className="object-cover object-center" sizes="288px" />
-                </div>
-                <span className="mt-3 text-[0.6rem] font-semibold uppercase tracking-widest text-primary">
-                  {displayData.spotlight.badge}
-                </span>
-                <h4 className="font-heading mt-1 text-sm font-semibold leading-snug">
-                  {displayData.spotlight.title}
-                </h4>
-                <Link href="#" tabIndex={activeCategory ? 0 : -1}
-                  className="mt-3 text-sm text-muted-foreground transition-colors hover:text-primary">
-                  Compre agora
-                </Link>
-              </div>
-            </InnerContainer>
-          )}
-        </div>
+        <MegaMenu activeCategory={activeCategory} displayData={displayData} />
       </header>
 
-      {/* ── Cart Sheet ─── */}
-      <Sheet open={cartOpen} onOpenChange={setCartOpen}>
-        <SheetContent side="right" className="flex flex-col sm:max-w-md">
-          <SheetHeader><SheetTitle>Carrinho</SheetTitle></SheetHeader>
-          <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center">
-            <ShoppingBagIcon className="h-10 w-10 text-muted-foreground/30" strokeWidth={1} />
-            <div>
-              <p className="text-sm font-medium">Seu carrinho está vazio</p>
-              <p className="mt-1 text-xs text-muted-foreground">Adicione peças para começar</p>
-            </div>
-            <Link href="/products" onClick={() => setCartOpen(false)}
-              className="mt-2 border-b border-border pb-0.5 text-sm text-muted-foreground transition-colors hover:border-foreground hover:text-foreground">
-              Ver coleção
-            </Link>
-          </div>
-        </SheetContent>
-      </Sheet>
+      <CartSheet open={cartOpen} onOpenChange={setCartOpen} />
     </>
   )
 }
