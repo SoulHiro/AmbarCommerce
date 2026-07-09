@@ -1,4 +1,5 @@
 import Header from '@/components/common/header'
+import { PageContainer } from '@/components/common/page-container'
 import { ProductList } from '@/components/common/products-list'
 import { db } from '@/db'
 import Image from 'next/image'
@@ -23,7 +24,9 @@ export default async function Home() {
           className="h-auto w-full"
         />
       </div>
-      <ProductList title="Produtos" products={products} />
+      <PageContainer>
+        <ProductList title="Produtos" products={products} />
+      </PageContainer>
     </>
   )
 }

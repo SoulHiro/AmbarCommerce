@@ -12,23 +12,28 @@ interface ProductsItemProps {
 export const ProductItem = ({ product }: ProductsItemProps) => {
   const firstVariant = product.variants[0]
 
+  if (!firstVariant) return null
+
   return (
-    <Link href={`/products/${product.id}`} className="flex flex-col gap-4">
-      <Image
-        src={firstVariant.imageUrl}
-        alt={product.name}
-        width={100}
-        height={100}
-      />
-      <div className="flex flex-col gap-1">
-        <p className="truncate text-sm font-medium">{product.name}</p>
-        <p className="text-muted-foreground truncate text-xs font-medium">
-          {product.description}
-        </p>
-        <p className="truncate text-sm font-semibold">
-          R$ {formatCentsToBRL(firstVariant.priceInCents)}
-        </p>
+    <Link href={`/products/${product.id}`} className="group flex flex-col">
+      <div className="relative aspect-[3/4] w-full overflow-hidden bg-muted">
+        <Image
+          src={firstVariant.imageUrl}
+          alt={product.name}
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          sizes="(max-width: 768px) 50vw, 25vw"
+        />
       </div>
+
+      <div className="mt-3 flex flex-col gap-1">
+        <p className="truncate text-sm font-medium">{product.name}</p>
+        <p className="text-muted-foreground line-clamp-2 text-xs">{product.description}</p>
+      </div>
+
+      <p className="mt-3 text-sm font-semibold">
+        {formatCentsToBRL(firstVariant.priceInCents)}
+      </p>
     </Link>
   )
 }

@@ -1,38 +1,44 @@
 import { productTable, productVariantTable } from '@/db/schema'
+import Link from 'next/link'
 import { ProductItem } from './products-item'
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '../ui/carousel'
 
 interface ProductsListProps {
   title: string
   products: (typeof productTable.$inferSelect & {
     variants: (typeof productVariantTable.$inferSelect)[]
   })[]
+  variant?: 'short' | 'long'
+  seeAllHref?: string
 }
 
-export const ProductList = ({ title, products }: ProductsListProps) => {
+export const ProductList = ({
+  title,
+  products,
+  variant = 'short',
+  seeAllHref,
+}: ProductsListProps) => {
+  const limit = variant === 'short' ? 4 : 8
+  const visibleProducts = products.slice(0, limit)
+
   return (
     <div className="space-y-6">
-      <h3 className="font-semibold">{title}</h3>
-      <Carousel className="w-full">
-        <CarouselContent className="-ml-4">
-          {products.map((product) => (
-            <CarouselItem
-              key={product.id}
-              className="basis-1/2 md:basis-1/3 lg:basis-1/4"
-            >
-              <ProductItem key={product.id} product={product} />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
+      <div className="flex items-center justify-between">
+        <h3 className="font-heading text-lg font-semibold">{title}</h3>
+        {seeAllHref && (
+          <Link
+            href={seeAllHref}
+            className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+          >
+            Ver todos
+          </Link>
+        )}
+      </div>
+
+      <div className="grid grid-cols-2 gap-x-3 gap-y-8 md:grid-cols-4">
+        {visibleProducts.map((product) => (
+          <ProductItem key={product.id} product={product} />
+        ))}
+      </div>
     </div>
   )
 }
