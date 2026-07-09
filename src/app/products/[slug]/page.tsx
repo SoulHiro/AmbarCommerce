@@ -13,11 +13,13 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 interface ProductPageProps {
-  params: Promise<{ slug: string }>
+  params:       Promise<{ slug: string }>
+  searchParams: Promise<Record<string, string | undefined>>
 }
 
-const ProductPage = async ({ params }: ProductPageProps) => {
+const ProductPage = async ({ params, searchParams }: ProductPageProps) => {
   const { slug } = await params
+  const { cor }  = await searchParams
 
   const product = await db.query.productTable.findFirst({
     where: eq(productTable.slug, slug),
@@ -30,8 +32,24 @@ const ProductPage = async ({ params }: ProductPageProps) => {
   if (!product) return notFound()
   if (!product.variants.length) return notFound()
 
-  const firstVariant     = product.variants[0]
-  const installmentPrice = formatCentsToBRL(Math.round(firstVariant.priceInCents / 3))
+  // Variante ativa vem do searchParam; cai na primeira se não tiver
+  const activeVariant    = product.variants.find(v => v.slug === cor) ?? product.variants[0]
+  const installmentPrice = formatCentsToBRL(Math.round(activeVariant.priceInCents / 3))
+
+  const dimensions = [
+    {
+      key:     'cor',
+      label:   'Cor',
+      type:    'swatch' as const,
+      options: product.variants.map(v => ({
+        value:    v.slug,
+        label:    v.color,
+        imageUrl: v.imageUrl,
+      })),
+    },
+    // Adicione novas dimensões aqui quando o schema crescer:
+    // { key: 'tamanho', label: 'Tamanho', type: 'pill', options: [...] },
+  ]
 
   return (
     <>
@@ -63,7 +81,7 @@ const ProductPage = async ({ params }: ProductPageProps) => {
           <div className="lg:col-span-3">
             <div className="relative aspect-[3/4] overflow-hidden bg-muted">
               <Image
-                src={firstVariant.imageUrl}
+                src={activeVariant.imageUrl}
                 alt={product.name}
                 fill
                 priority
@@ -84,14 +102,14 @@ const ProductPage = async ({ params }: ProductPageProps) => {
 
             <div>
               <p className="text-2xl font-medium">
-                {formatCentsToBRL(firstVariant.priceInCents)}
+                {formatCentsToBRL(activeVariant.priceInCents)}
               </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 ou 3× de {installmentPrice} sem juros
               </p>
             </div>
 
-            <VariantSelector variants={product.variants} />
+            <VariantSelector dimensions={dimensions} />
 
             <div>
               <p className="text-[0.6rem] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
