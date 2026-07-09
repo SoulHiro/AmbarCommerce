@@ -1,7 +1,8 @@
 "use client"
 
+import { useEffect } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -28,6 +29,13 @@ type FormData = z.infer<typeof schema>
 
 export function SignUpForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    if (searchParams.get("error")) {
+      toast.error("Nenhuma conta encontrada com esse email do Google. Crie uma conta primeiro.")
+    }
+  }, [searchParams])
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),

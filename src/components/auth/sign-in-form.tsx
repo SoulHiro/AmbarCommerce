@@ -51,6 +51,7 @@ export function SignInForm() {
     const { error } = await authClient.signIn.social({
       provider: "google",
       callbackURL: "/",
+      errorCallbackURL: "/auth/sign-up",
     })
     if (error) {
       toast.error(error.message ?? "Erro ao entrar com Google")
