@@ -11,7 +11,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       </div>
       <div className="relative hidden lg:block lg:w-1/2">
         <Image
-          src="/images/authentication.webp"
+          src="/images/auth.webp"
           alt="Authentication"
           fill
           className="object-cover"
