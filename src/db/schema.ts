@@ -85,7 +85,7 @@ export const verificationTable = pgTable(
 export const userRelations = relations(userTable, ({ many }) => ({
   sessions: many(sessionTable),
   accounts: many(accountTable),
-  shippingAddresses: many(shippingAgressTable),
+  shippingAddresses: many(shippingAddressTable),
 }))
 
 export const sessionRelations = relations(sessionTable, ({ one }) => ({
@@ -155,7 +155,7 @@ export const productVariantRelations = relations(
   })
 )
 
-export const shippingAgressTable = pgTable('shipping_address', {
+export const shippingAddressTable = pgTable('shipping_address', {
   id: uuid().primaryKey().defaultRandom(),
   userId: text('user_id')
     .notNull()
@@ -179,10 +179,10 @@ export const shippingAgressTable = pgTable('shipping_address', {
 })
 
 export const shippingAddressRelations = relations(
-  shippingAgressTable,
+  shippingAddressTable,
   ({ one }) => ({
     user: one(userTable, {
-      fields: [shippingAgressTable.userId],
+      fields: [shippingAddressTable.userId],
       references: [userTable.id],
     }),
   })
