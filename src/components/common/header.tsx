@@ -6,7 +6,6 @@ import {
   HeartIcon,
   HistoryIcon,
   LogInIcon,
-  LogOutIcon,
   MapPinIcon,
   MenuIcon,
   SearchIcon,
@@ -138,13 +137,17 @@ export default function Header() {
                 {session?.user ? (
                   <>
                     {/* User header */}
-                    <div className="px-5 py-4 border-b border-border">
-                      <p className="text-sm font-semibold leading-none">{session.user.name}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">{session.user.email}</p>
+                    <div className="px-5 py-4">
+                      {session.user.name && (
+                        <p className="text-sm font-semibold leading-none">{session.user.name}</p>
+                      )}
+                      <p className={session.user.name ? 'mt-1 text-xs text-muted-foreground' : 'text-sm font-semibold leading-none'}>
+                        {session.user.email}
+                      </p>
                     </div>
 
                     {/* Menu items */}
-                    <div className="py-1">
+                    <div className="pb-1">
                       {PROFILE_MENU.map(({ label, icon: Icon, href }) => (
                         <Link key={label} href={href}
                           className="flex items-center gap-3 px-5 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
@@ -154,13 +157,8 @@ export default function Header() {
                       ))}
                     </div>
 
-                    {/* Footer: Sair + Minha conta */}
-                    <div className="border-t border-border px-3 pb-3 pt-2">
-                      <button onClick={() => authClient.signOut()}
-                        className="flex w-full cursor-pointer justify-center pb-2 pt-1 text-xs text-muted-foreground transition-colors hover:text-foreground">
-                        <LogOutIcon className="mr-1.5 h-3.5 w-3.5" strokeWidth={1.5} />
-                        Sair
-                      </button>
+                    {/* Minha conta */}
+                    <div className="px-3 pb-3">
                       <Link href="/profile"
                         className="flex items-center justify-center bg-muted py-2.5 text-sm font-medium transition-colors hover:bg-accent hover:text-foreground">
                         Minha conta
