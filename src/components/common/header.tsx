@@ -12,7 +12,6 @@ import {
   SearchIcon,
   ShoppingBagIcon,
   UserIcon,
-  UserRoundIcon,
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -83,7 +82,6 @@ const NAV_CATEGORIES: NavCategory[] = [
 const GENDER_LINKS = ['Mulher', 'Homem', 'Crianças']
 
 const PROFILE_MENU = [
-  { label: 'Minha conta', icon: UserRoundIcon, href: '/profile' },
   { label: 'Histórico de pedidos', icon: HistoryIcon, href: '/orders' },
   { label: 'Favoritos', icon: HeartIcon, href: '/wishlist' },
   { label: 'Endereços', icon: MapPinIcon, href: '/addresses' },
@@ -127,42 +125,70 @@ export default function Header() {
             <Popover>
               <PopoverTrigger asChild>
                 <button aria-label="Perfil"
-                  className="text-muted-foreground transition-colors hover:text-foreground">
+                  className="flex cursor-pointer items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground">
                   <UserIcon className="h-5 w-5" strokeWidth={1.5} />
+                  {session?.user && (
+                    <span className="text-sm">
+                      {session.user.name?.split(' ')[0]}
+                    </span>
+                  )}
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="py-1">
-                {PROFILE_MENU.map(({ label, icon: Icon, href }) => (
-                  <Link key={label} href={href}
-                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
-                    <Icon className="h-4 w-4 flex-shrink-0" strokeWidth={1.5} />
-                    {label}
-                  </Link>
-                ))}
-                <div className="my-1 border-t border-border" />
+              <PopoverContent className="w-72 p-0">
                 {session?.user ? (
-                  <button onClick={() => authClient.signOut()}
-                    className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
-                    <LogOutIcon className="h-4 w-4" strokeWidth={1.5} />
-                    Sair
-                  </button>
+                  <>
+                    {/* User header */}
+                    <div className="px-5 py-4 border-b border-border">
+                      <p className="text-sm font-semibold leading-none">{session.user.name}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">{session.user.email}</p>
+                    </div>
+
+                    {/* Menu items */}
+                    <div className="py-1">
+                      {PROFILE_MENU.map(({ label, icon: Icon, href }) => (
+                        <Link key={label} href={href}
+                          className="flex items-center gap-3 px-5 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
+                          <Icon className="h-4 w-4 flex-shrink-0" strokeWidth={1.5} />
+                          {label}
+                        </Link>
+                      ))}
+                    </div>
+
+                    {/* Footer: Sair + Minha conta */}
+                    <div className="border-t border-border px-3 pb-3 pt-2">
+                      <button onClick={() => authClient.signOut()}
+                        className="flex w-full cursor-pointer justify-center pb-2 pt-1 text-xs text-muted-foreground transition-colors hover:text-foreground">
+                        <LogOutIcon className="mr-1.5 h-3.5 w-3.5" strokeWidth={1.5} />
+                        Sair
+                      </button>
+                      <Link href="/profile"
+                        className="flex items-center justify-center bg-muted py-2.5 text-sm font-medium transition-colors hover:bg-accent hover:text-foreground">
+                        Minha conta
+                      </Link>
+                    </div>
+                  </>
                 ) : (
-                  <Link href="/auth/sign-in"
-                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
-                    <LogInIcon className="h-4 w-4" strokeWidth={1.5} />
-                    Entrar
-                  </Link>
+                  <div className="px-3 py-3">
+                    <Link href="/auth/sign-in"
+                      className="flex items-center justify-center bg-muted py-2.5 text-sm font-medium transition-colors hover:bg-accent hover:text-foreground">
+                      Entrar
+                    </Link>
+                    <Link href="/auth/sign-up"
+                      className="mt-2 flex justify-center text-xs text-muted-foreground transition-colors hover:text-foreground">
+                      Criar conta
+                    </Link>
+                  </div>
                 )}
               </PopoverContent>
             </Popover>
 
-            <button aria-label="Favoritos"
+            <Link href="/wishlist" aria-label="Favoritos"
               className="text-muted-foreground transition-colors hover:text-foreground">
               <HeartIcon className="h-5 w-5" strokeWidth={1.5} />
-            </button>
+            </Link>
 
             <button aria-label="Carrinho" onClick={() => setCartOpen(true)}
-              className="text-muted-foreground transition-colors hover:text-foreground">
+              className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground">
               <ShoppingBagIcon className="h-5 w-5" strokeWidth={1.5} />
             </button>
           </div>
@@ -288,7 +314,7 @@ export default function Header() {
 
       {/* ── Cart Sheet ─── */}
       <Sheet open={cartOpen} onOpenChange={setCartOpen}>
-        <SheetContent side="right" className="flex flex-col">
+        <SheetContent side="right" className="flex flex-col sm:max-w-md">
           <SheetHeader><SheetTitle>Carrinho</SheetTitle></SheetHeader>
           <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center">
             <ShoppingBagIcon className="h-10 w-10 text-muted-foreground/30" strokeWidth={1} />

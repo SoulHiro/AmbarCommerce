@@ -45,7 +45,7 @@ export function EditorialBanner({
       <div className="absolute inset-0 flex flex-col justify-end pt-10 pb-14">
         <InnerContainer>
           <div
-            className={isRight ? 'max-w-sm text-right' : 'max-w-sm text-left'}
+            className={isRight ? 'ml-auto max-w-sm text-right' : 'mr-auto max-w-sm text-left'}
           >
             {eyebrow && (
               <span className="text-[0.65rem] font-semibold tracking-widest text-white/70 uppercase">
