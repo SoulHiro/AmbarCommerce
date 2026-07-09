@@ -15,6 +15,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           alt="Authentication"
           fill
           className="object-cover"
+          quality={100}
           priority
         />
         <div className="absolute inset-0 bg-black/30" />
