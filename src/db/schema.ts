@@ -82,10 +82,14 @@ export const verificationTable = pgTable(
   (table) => [index('verification_identifier_idx').on(table.identifier)]
 )
 
-export const userRelations = relations(userTable, ({ many }) => ({
+export const userRelations = relations(userTable, ({ many, one }) => ({
   sessions: many(sessionTable),
   accounts: many(accountTable),
   shippingAddresses: many(shippingAddressTable),
+  cart: one(cartTable, {
+    fields: [userTable.id],
+    references: [cartTable.userId],
+  }),
 }))
 
 export const sessionRelations = relations(sessionTable, ({ one }) => ({
@@ -187,3 +191,26 @@ export const shippingAddressRelations = relations(
     }),
   })
 )
+
+export const cartTable = pgTable('cart', {
+  id: uuid().primaryKey().defaultRandom(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => userTable.id),
+  shippingAddressId: uuid('shipping_address_id').references(
+    () => shippingAddressTable.id,
+    { onDelete: 'set null' }
+  ),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+})
+
+export const cartRelations = relations(cartTable, ({ one }) => ({
+  user: one(userTable, {
+    fields: [cartTable.userId],
+    references: [userTable.id],
+  }),
+  shippingAddress: one(shippingAddressTable, {
+    fields: [cartTable.shippingAddressId],
+    references: [shippingAddressTable.id],
+  }),
+}))
