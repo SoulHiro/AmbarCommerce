@@ -18,6 +18,7 @@ export const getCart = async () => {
     where: (cart, { eq }) => eq(cart.userId, session.user.id),
     with: {
       items: {
+        orderBy: (items, { asc }) => [asc(items.createdAt)],
         with: {
           productVariant: {
             with: {

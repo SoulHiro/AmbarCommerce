@@ -1,9 +1,10 @@
 'use client'
 
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { formatCentsToBRL } from '@/helpers/money'
 import { groupCartItemsByProduct, calcCartSubtotal, calcCartItemCount } from '@/helpers/cart'
 import { getCart } from '@/actions/get-cart'
+import { updateCartItem } from '@/actions/update-cart-item'
 import { ShoppingBagIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -23,6 +24,12 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
     queryKey: ['cart'],
     queryFn: () => getCart(),
     enabled: open,
+  })
+
+  const { mutate: updateQty } = useMutation({
+    mutationFn: (vars: { cartItemId: string; quantity: number }) =>
+      updateCartItem(vars),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['cart'] }),
   })
 
   const items = cart?.items ?? []
@@ -105,12 +112,12 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
                             <div className="flex items-center justify-between">
                               <QuantityControl
                                 quantity={item.quantity}
-                                onDecrease={() => {
-                                  // TODO: chamar update-quantity action
-                                }}
-                                onIncrease={() => {
-                                  // TODO: chamar update-quantity action
-                                }}
+                                onDecrease={() =>
+                                  updateQty({ cartItemId: item.id, quantity: item.quantity - 1 })
+                                }
+                                onIncrease={() =>
+                                  updateQty({ cartItemId: item.id, quantity: item.quantity + 1 })
+                                }
                               />
                               <span className="text-sm font-medium tabular-nums">
                                 {formatCentsToBRL(item.productVariant.priceInCents * item.quantity)}

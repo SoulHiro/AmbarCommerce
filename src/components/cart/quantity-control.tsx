@@ -24,7 +24,7 @@ export function QuantityControl({
         onClick={onDecrease}
         disabled={isPending || quantity <= 1}
         aria-label="Diminuir quantidade"
-        className="flex h-6 w-6 items-center justify-center text-muted-foreground transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30"
+        className="flex h-6 w-6 cursor-pointer items-center justify-center text-muted-foreground transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30"
       >
         <MinusIcon className="h-3 w-3" strokeWidth={1.5} />
       </button>
@@ -37,7 +37,7 @@ export function QuantityControl({
         onClick={onIncrease}
         disabled={isPending}
         aria-label="Aumentar quantidade"
-        className="flex h-6 w-6 items-center justify-center text-muted-foreground transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30"
+        className="flex h-6 w-6 cursor-pointer items-center justify-center text-muted-foreground transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30"
       >
         <PlusIcon className="h-3 w-3" strokeWidth={1.5} />
       </button>
