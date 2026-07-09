@@ -1,16 +1,16 @@
 'use client'
 import { LogInIcon, MenuIcon } from 'lucide-react'
-import { Logo } from './brand/logo'
-import { Button } from './ui/button'
+import { Logo } from '../brand/logo'
+import { Button } from '../ui/button'
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from './ui/sheet'
+} from '../ui/sheet'
 import { authClient } from '@/lib/auth-client'
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import Link from 'next/link'
 
 export default function Header() {
