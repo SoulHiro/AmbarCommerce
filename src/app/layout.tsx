@@ -3,8 +3,12 @@ import { Noto_Sans, Playfair_Display } from 'next/font/google'
 import { Toaster } from '@/components/ui/sonner'
 import { cn } from '@/lib/utils'
 import './globals.css'
+import ReactQueryProvider from '@/providers/react-query'
 
-const playfairDisplay = Playfair_Display({ subsets: ['latin'], variable: '--font-heading' })
+const playfairDisplay = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-heading',
+})
 const notoSans = Noto_Sans({ subsets: ['latin'], variable: '--font-sans' })
 
 export const metadata: Metadata = {
@@ -18,9 +22,12 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pt-BR" className={cn('font-sans', notoSans.variable, playfairDisplay.variable)}>
+    <html
+      lang="pt-BR"
+      className={cn('font-sans', notoSans.variable, playfairDisplay.variable)}
+    >
       <body className="antialiased">
-        {children}
+        <ReactQueryProvider>{children}</ReactQueryProvider>
         <Toaster />
       </body>
     </html>

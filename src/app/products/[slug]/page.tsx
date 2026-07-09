@@ -16,7 +16,7 @@ import {
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { AddCardButton } from '@/components/product/add-card-button'
+import { AddCartButton } from '@/components/product/add-cart-button'
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>
@@ -129,7 +129,7 @@ const ProductPage = async ({ params, searchParams }: ProductPageProps) => {
             </div>
 
             <div className="flex flex-col gap-3">
-              <AddCardButton />
+              <AddCartButton productVariantId={activeVariant.id} quantity={1} />
               <Button variant="outline" size="lg" className="w-full">
                 Comprar agora
               </Button>
