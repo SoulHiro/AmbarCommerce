@@ -1,10 +1,11 @@
 import Image from "next/image"
+import { Logo } from "@/components/brand/logo"
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen">
       <div className="flex w-full flex-col p-8 lg:w-1/2">
-        <span className="text-xl font-bold tracking-tight">Âmbar</span>
+        <Logo iconHeight={36} />
         <div className="flex flex-1 items-center justify-center">
           {children}
         </div>
