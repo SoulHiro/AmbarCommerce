@@ -1,12 +1,14 @@
 import Header from '@/components/common/header'
 import { PageContainer } from '@/components/common/page-container'
 import { ProductItem } from '@/components/common/products-item'
+import { Pagination } from '@/components/common/pagination'
 import {
   FilterSidebar,
   MobileFilterDrawer,
 } from '@/components/category/filter-sidebar'
 import { db, productTable } from '@/db'
 import { formatCentsToBRL } from '@/helpers/money'
+import { paginate } from '@/helpers/pagination'
 import { eq } from 'drizzle-orm'
 import { XIcon } from 'lucide-react'
 import { notFound } from 'next/navigation'
@@ -28,6 +30,7 @@ interface GenderPageProps {
 const GenderPage = async ({ params, searchParams }: GenderPageProps) => {
   const { gender } = await params
   const filters    = await searchParams
+  const page       = Number(filters.page ?? '1')
 
   if (!VALID_GENDERS.includes(gender as Gender)) return notFound()
 
@@ -81,6 +84,9 @@ const GenderPage = async ({ params, searchParams }: GenderPageProps) => {
     )
   }
 
+  // ── Paginação ────────────────────────────────────────────────────────────
+  const { items: pagedProducts, currentPage, totalPages } = paginate(products, page)
+
   // ── Chips de filtros ativos ───────────────────────────────────────────────
   const activeChips: { label: string; removeKey: string; removeValue?: string }[] = []
 
@@ -132,11 +138,14 @@ const GenderPage = async ({ params, searchParams }: GenderPageProps) => {
             )}
 
             {products.length > 0 ? (
-              <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3">
-                {products.map(product => (
-                  <ProductItem key={product.id} product={product} />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3">
+                  {pagedProducts.map(product => (
+                    <ProductItem key={product.id} product={product} />
+                  ))}
+                </div>
+                <Pagination currentPage={currentPage} totalPages={totalPages} searchParams={filters} />
+              </>
             ) : (
               <div className="flex flex-col items-center justify-center py-32 text-center">
                 <p className="text-sm font-medium">Nenhuma peça encontrada</p>
