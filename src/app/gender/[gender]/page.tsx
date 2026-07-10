@@ -6,11 +6,14 @@ import {
   FilterSidebar,
   MobileFilterDrawer,
 } from '@/components/category/filter-sidebar'
+import { getWishlistIds } from '@/actions/get-wishlist-ids'
 import { db, productTable } from '@/db'
 import { formatCentsToBRL } from '@/helpers/money'
 import { paginate } from '@/helpers/pagination'
+import { auth } from '@/lib/auth'
 import { eq } from 'drizzle-orm'
 import { XIcon } from 'lucide-react'
+import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 
 const GENDER_LABELS: Record<string, string> = {
@@ -33,6 +36,12 @@ const GenderPage = async ({ params, searchParams }: GenderPageProps) => {
   const page       = Number(filters.page ?? '1')
 
   if (!VALID_GENDERS.includes(gender as Gender)) return notFound()
+
+  const [session, wishlistIds] = await Promise.all([
+    auth.api.getSession({ headers: await headers() }),
+    getWishlistIds(),
+  ])
+  const isAuthenticated = !!session?.user
 
   let products = await db.query.productTable.findMany({
     where: eq(productTable.gender, gender as Gender),
@@ -141,7 +150,12 @@ const GenderPage = async ({ params, searchParams }: GenderPageProps) => {
               <>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3">
                   {pagedProducts.map(product => (
-                    <ProductItem key={product.id} product={product} />
+                    <ProductItem
+                      key={product.id}
+                      product={product}
+                      isFavorited={wishlistIds.includes(product.id)}
+                      isAuthenticated={isAuthenticated}
+                    />
                   ))}
                 </div>
                 <Pagination currentPage={currentPage} totalPages={totalPages} searchParams={filters} />

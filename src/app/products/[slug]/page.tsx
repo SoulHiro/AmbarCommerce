@@ -1,3 +1,4 @@
+import { getWishlistIds } from '@/actions/get-wishlist-ids'
 import Header from '@/components/common/header'
 import { PageContainer } from '@/components/common/page-container'
 import { FavoriteButton } from '@/components/common/favorite-button'
@@ -6,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { db } from '@/db'
 import { productTable } from '@/db/schema'
 import { formatCentsToBRL } from '@/helpers/money'
+import { auth } from '@/lib/auth'
 import { eq } from 'drizzle-orm'
 import {
   PlusIcon,
@@ -15,6 +17,7 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { AddCartButton } from '@/components/product/add-cart-button'
 
@@ -27,16 +30,21 @@ const ProductPage = async ({ params, searchParams }: ProductPageProps) => {
   const { slug } = await params
   const { cor, tamanho } = await searchParams
 
-  const product = await db.query.productTable.findFirst({
-    where: eq(productTable.slug, slug),
-    with: {
-      variants: true,
-      category: true,
-    },
-  })
+  const [product, session, wishlistIds] = await Promise.all([
+    db.query.productTable.findFirst({
+      where: eq(productTable.slug, slug),
+      with: { variants: true, category: true },
+    }),
+    auth.api.getSession({ headers: await headers() }),
+    getWishlistIds(),
+  ])
 
   if (!product) return notFound()
   if (!product.variants.length) return notFound()
+
+  const isAuthenticated = !!session?.user
+  const isFavorited = wishlistIds.includes(product.id)
+
 
   // Cor: deduplica variantes para mostrar cada cor uma única vez
   const colorOptions = Array.from(
@@ -112,7 +120,12 @@ const ProductPage = async ({ params, searchParams }: ProductPageProps) => {
                 className="object-cover object-center transition-transform duration-700 hover:scale-[1.02]"
                 sizes="(max-width: 1024px) 100vw, 60vw"
               />
-              <FavoriteButton className="top-4 right-4 bg-white/80 p-2 backdrop-blur-sm" />
+              <FavoriteButton
+                productId={product.id}
+                initialFavorited={isFavorited}
+                isAuthenticated={isAuthenticated}
+                className="top-4 right-4 bg-white/80 p-2 backdrop-blur-sm"
+              />
             </div>
           </div>
 

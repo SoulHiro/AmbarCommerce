@@ -8,9 +8,15 @@ interface ProductsItemProps {
   product: typeof productTable.$inferSelect & {
     variants: (typeof productVariantTable.$inferSelect)[]
   }
+  isFavorited?:    boolean
+  isAuthenticated?: boolean
 }
 
-export const ProductItem = ({ product }: ProductsItemProps) => {
+export const ProductItem = ({
+  product,
+  isFavorited = false,
+  isAuthenticated = false,
+}: ProductsItemProps) => {
   const firstVariant = product.variants[0]
 
   if (!firstVariant) return null
@@ -28,7 +34,11 @@ export const ProductItem = ({ product }: ProductsItemProps) => {
           className="object-cover transition-transform duration-500 group-hover:scale-105"
           sizes="(max-width: 768px) 50vw, 25vw"
         />
-        <FavoriteButton />
+        <FavoriteButton
+          productId={product.id}
+          initialFavorited={isFavorited}
+          isAuthenticated={isAuthenticated}
+        />
       </div>
 
       <div className="mt-3 flex flex-col gap-1">

@@ -6,10 +6,13 @@ import {
   FilterSidebar,
   MobileFilterDrawer,
 } from '@/components/category/filter-sidebar'
+import { getWishlistIds } from '@/actions/get-wishlist-ids'
 import { categoryTable, db, productTable } from '@/db'
 import { formatCentsToBRL } from '@/helpers/money'
 import { paginate } from '@/helpers/pagination'
+import { auth } from '@/lib/auth'
 import { eq } from 'drizzle-orm'
+import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 
 interface CategoryPageProps {
@@ -21,6 +24,12 @@ const CategoryPage = async ({ params, searchParams }: CategoryPageProps) => {
   const { slug }  = await params
   const filters   = await searchParams
   const page      = Number(filters.page ?? '1')
+
+  const [session, wishlistIds] = await Promise.all([
+    auth.api.getSession({ headers: await headers() }),
+    getWishlistIds(),
+  ])
+  const isAuthenticated = !!session?.user
 
   const category = await db.query.categoryTable.findFirst({
     where: eq(categoryTable.slug, slug),
@@ -139,7 +148,12 @@ const CategoryPage = async ({ params, searchParams }: CategoryPageProps) => {
               <>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3">
                   {pagedProducts.map(product => (
-                    <ProductItem key={product.id} product={product} />
+                    <ProductItem
+                      key={product.id}
+                      product={product}
+                      isFavorited={wishlistIds.includes(product.id)}
+                      isAuthenticated={isAuthenticated}
+                    />
                   ))}
                 </div>
                 <Pagination currentPage={currentPage} totalPages={totalPages} searchParams={filters} />

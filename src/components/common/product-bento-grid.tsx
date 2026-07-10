@@ -53,7 +53,11 @@ function BentoCell({ product, sizes }: { product: Product; sizes: string }) {
         </p>
       </div>
 
-      <FavoriteButton />
+      <FavoriteButton
+        productId={product.id}
+        initialFavorited={false}
+        isAuthenticated={false}
+      />
     </Link>
   )
 }
