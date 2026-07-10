@@ -58,7 +58,7 @@ function BentoCell({ product, sizes }: { product: Product; sizes: string }) {
       <FavoriteButton
         productId={product.id}
         initialFavorited={false}
-        className="bg-white/70 p-1.5 backdrop-blur-sm"
+        className="absolute right-2 top-2 z-10 bg-white/70 p-1.5 backdrop-blur-sm"
       />
     </div>
   )

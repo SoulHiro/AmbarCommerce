@@ -1,3 +1,4 @@
+import { getWishlistIds } from '@/actions/get-wishlist-ids'
 import Header from '@/components/common/header'
 import { PageContainer } from '@/components/common/page-container'
 import { CategoryGrid, type Category } from '@/components/common/category-grid'
@@ -14,9 +15,10 @@ const CATEGORIES: Category[] = [
 ]
 
 export default async function Home() {
-  const products = await db.query.productTable.findMany({
-    with: { variants: true },
-  })
+  const [products, wishlistIds] = await Promise.all([
+    db.query.productTable.findMany({ with: { variants: true } }),
+    getWishlistIds(),
+  ])
 
   return (
     <>
@@ -39,7 +41,7 @@ export default async function Home() {
           <h2 className="font-heading max-w-[260px] text-2xl font-semibold leading-snug">
             As peças que estamos amando esta temporada
           </h2>
-          <ProductList products={products} variant="short" seeAllHref="/products" />
+          <ProductList products={products} variant="short" seeAllHref="/products" wishlistIds={wishlistIds} />
         </section>
       </PageContainer>
 
@@ -59,6 +61,7 @@ export default async function Home() {
           products={products}
           variant="short"
           seeAllHref="/products"
+          wishlistIds={wishlistIds}
         />
 
         {/* Categorias em destaque */}

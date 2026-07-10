@@ -4,10 +4,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { formatCentsToBRL } from '@/helpers/money'
 import { groupCartItemsByProduct, calcCartSubtotal, calcCartItemCount } from '@/helpers/cart'
 import { getCart } from '@/actions/get-cart'
+import { getWishlistIds } from '@/actions/get-wishlist-ids'
 import { removeCartItem } from '@/actions/remove-cart-item'
 import { updateCartItem } from '@/actions/update-cart-item'
 import { authClient } from '@/lib/auth-client'
 import { ShoppingBagIcon } from 'lucide-react'
+import { FavoriteButton } from './favorite-button'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Sheet, SheetContent } from '../ui/sheet'
@@ -28,6 +30,12 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
     queryKey: ['cart'],
     queryFn: () => getCart(),
     enabled: open && isAuthenticated,
+  })
+
+  const { data: wishlistIds = [] } = useQuery({
+    queryKey: ['wishlist-ids'],
+    queryFn: () => getWishlistIds(),
+    enabled: isAuthenticated,
   })
 
   const { mutate: updateQty } = useMutation({
@@ -134,10 +142,17 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
                                   </span>
                                 )}
                               </div>
-                              <RemoveItemButton
-                                onRemove={() => removeItem(item.id)}
-                                isPending={isRemoving}
-                              />
+                              <div className="flex items-center gap-1">
+                                <FavoriteButton
+                                  productId={group.product.id}
+                                  initialFavorited={wishlistIds.includes(group.product.id)}
+                                  className="p-1"
+                                />
+                                <RemoveItemButton
+                                  onRemove={() => removeItem(item.id)}
+                                  isPending={isRemoving}
+                                />
+                              </div>
                             </div>
 
                             <div className="flex items-center justify-between">

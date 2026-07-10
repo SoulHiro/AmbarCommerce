@@ -10,12 +10,14 @@ import { useState, useTransition } from 'react'
 interface FavoriteButtonProps {
   productId:        string
   initialFavorited: boolean
+  showLabel?:       boolean
   className?:       string
 }
 
 export function FavoriteButton({
   productId,
   initialFavorited,
+  showLabel = false,
   className,
 }: FavoriteButtonProps) {
   const [favorited, setFavorited] = useState(initialFavorited)
@@ -50,16 +52,21 @@ export function FavoriteButton({
       onClick={handleClick}
       disabled={isPending}
       className={cn(
-        'absolute right-2 top-2 z-10 cursor-pointer p-1 transition-colors disabled:cursor-not-allowed',
+        'flex cursor-pointer items-center gap-1.5 transition-colors disabled:cursor-not-allowed',
         favorited ? 'text-primary' : 'text-muted-foreground/60 hover:text-primary',
         className,
       )}
     >
       <HeartIcon
-        className="h-4 w-4"
+        className="h-4 w-4 flex-shrink-0"
         strokeWidth={1.5}
         fill={favorited ? 'currentColor' : 'none'}
       />
+      {showLabel && (
+        <span className="text-[0.65rem] font-medium uppercase tracking-[0.14em]">
+          {favorited ? 'Salvo' : 'Favoritar'}
+        </span>
+      )}
     </button>
   )
 }

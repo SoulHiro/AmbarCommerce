@@ -7,8 +7,9 @@ interface ProductsListProps {
   products: (typeof productTable.$inferSelect & {
     variants: (typeof productVariantTable.$inferSelect)[]
   })[]
-  variant?: 'short' | 'long'
-  seeAllHref?: string
+  variant?:     'short' | 'long'
+  seeAllHref?:  string
+  wishlistIds?: string[]
 }
 
 export const ProductList = ({
@@ -16,6 +17,7 @@ export const ProductList = ({
   products,
   variant = 'short',
   seeAllHref,
+  wishlistIds = [],
 }: ProductsListProps) => {
   const limit = variant === 'short' ? 4 : 8
   const visibleProducts = products.slice(0, limit)
@@ -38,7 +40,7 @@ export const ProductList = ({
 
       <div className="grid grid-cols-2 gap-x-3 gap-y-8 md:grid-cols-4">
         {visibleProducts.map((product) => (
-          <ProductItem key={product.id} product={product} />
+          <ProductItem key={product.id} product={product} isFavorited={wishlistIds.includes(product.id)} />
         ))}
       </div>
     </div>

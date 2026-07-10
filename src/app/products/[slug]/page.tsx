@@ -120,19 +120,22 @@ const ProductPage = async ({ params, searchParams }: ProductPageProps) => {
                 className="object-cover object-center transition-transform duration-700 hover:scale-[1.02]"
                 sizes="(max-width: 1024px) 100vw, 60vw"
               />
-              <FavoriteButton
-                productId={product.id}
-                initialFavorited={isFavorited}
-                className="top-4 right-4 bg-white/80 p-2 backdrop-blur-sm"
-              />
             </div>
           </div>
 
           {/* Informações */}
           <div className="flex flex-col gap-8 lg:col-span-2 lg:pt-2">
-            <h1 className="font-heading text-3xl leading-snug font-semibold md:text-4xl">
-              {product.name}
-            </h1>
+            <div className="flex items-start justify-between gap-4">
+              <h1 className="font-heading text-3xl leading-snug font-semibold md:text-4xl">
+                {product.name}
+              </h1>
+              <FavoriteButton
+                productId={product.id}
+                initialFavorited={isFavorited}
+                showLabel
+                className="mt-1.5 flex-shrink-0"
+              />
+            </div>
 
             <div>
               <p className="text-2xl font-medium">

@@ -56,6 +56,7 @@ export const ProductItem = ({
       <FavoriteButton
         productId={product.id}
         initialFavorited={isFavorited}
+        className="absolute right-2 top-2 z-10 p-1"
       />
     </div>
   )
