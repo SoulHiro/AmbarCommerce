@@ -634,7 +634,7 @@ async function main() {
           productId: productId,
           color: variantData.color,
           size: variantData.size,
-          imageUrl: variantImages,
+          imageUrl: variantImages[0] ?? '',
           priceInCents: variantData.price,
           slug: generateSlug(slugBase),
         })
