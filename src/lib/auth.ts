@@ -10,6 +10,10 @@ import {
 
 export const auth = betterAuth({
     baseURL: process.env.BETTER_AUTH_URL,
+    accountLinking: {
+        enabled: true,
+        trustedProviders: ["google"],
+    },
     database: drizzleAdapter(db, {
         provider: "pg",
         schema: {

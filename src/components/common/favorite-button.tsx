@@ -12,6 +12,7 @@ interface FavoriteButtonProps {
   initialFavorited: boolean
   showLabel?:       boolean
   className?:       string
+  onToggle?:        (favorited: boolean) => void
 }
 
 export function FavoriteButton({
@@ -19,6 +20,7 @@ export function FavoriteButton({
   initialFavorited,
   showLabel = false,
   className,
+  onToggle,
 }: FavoriteButtonProps) {
   const [favorited, setFavorited] = useState(initialFavorited)
   const [isPending, startTransition] = useTransition()
@@ -40,6 +42,7 @@ export function FavoriteButton({
     startTransition(async () => {
       try {
         await toggleWishlist({ productId })
+        onToggle?.(!prev)
       } catch {
         setFavorited(prev)
       }
