@@ -1,6 +1,7 @@
 'use client'
 
 import { toggleWishlist } from '@/actions/toggle-wishlist'
+import { authClient } from '@/lib/auth-client'
 import { cn } from '@/lib/utils'
 import { HeartIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -9,25 +10,24 @@ import { useState, useTransition } from 'react'
 interface FavoriteButtonProps {
   productId:        string
   initialFavorited: boolean
-  isAuthenticated:  boolean
   className?:       string
 }
 
 export function FavoriteButton({
   productId,
   initialFavorited,
-  isAuthenticated,
   className,
 }: FavoriteButtonProps) {
   const [favorited, setFavorited] = useState(initialFavorited)
   const [isPending, startTransition] = useTransition()
+  const { data: session } = authClient.useSession()
   const router = useRouter()
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
 
-    if (!isAuthenticated) {
+    if (!session?.user) {
       router.push('/auth/sign-in')
       return
     }

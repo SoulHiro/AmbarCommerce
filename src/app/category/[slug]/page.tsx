@@ -152,7 +152,6 @@ const CategoryPage = async ({ params, searchParams }: CategoryPageProps) => {
                       key={product.id}
                       product={product}
                       isFavorited={wishlistIds.includes(product.id)}
-                      isAuthenticated={isAuthenticated}
                     />
                   ))}
                 </div>

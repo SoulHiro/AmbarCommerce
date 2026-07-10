@@ -8,14 +8,12 @@ interface ProductsItemProps {
   product: typeof productTable.$inferSelect & {
     variants: (typeof productVariantTable.$inferSelect)[]
   }
-  isFavorited?:     boolean
-  isAuthenticated?: boolean
+  isFavorited?: boolean
 }
 
 export const ProductItem = ({
   product,
   isFavorited = false,
-  isAuthenticated = false,
 }: ProductsItemProps) => {
   const firstVariant = product.variants[0]
 
@@ -58,7 +56,6 @@ export const ProductItem = ({
       <FavoriteButton
         productId={product.id}
         initialFavorited={isFavorited}
-        isAuthenticated={isAuthenticated}
       />
     </div>
   )

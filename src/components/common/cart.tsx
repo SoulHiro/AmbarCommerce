@@ -6,6 +6,7 @@ import { groupCartItemsByProduct, calcCartSubtotal, calcCartItemCount } from '@/
 import { getCart } from '@/actions/get-cart'
 import { removeCartItem } from '@/actions/remove-cart-item'
 import { updateCartItem } from '@/actions/update-cart-item'
+import { authClient } from '@/lib/auth-client'
 import { ShoppingBagIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -20,11 +21,13 @@ interface CartSheetProps {
 
 export function CartSheet({ open, onOpenChange }: CartSheetProps) {
   const queryClient = useQueryClient()
+  const { data: session } = authClient.useSession()
+  const isAuthenticated = !!session?.user
 
   const { data: cart, isLoading } = useQuery({
     queryKey: ['cart'],
     queryFn: () => getCart(),
-    enabled: open,
+    enabled: open && isAuthenticated,
   })
 
   const { mutate: updateQty } = useMutation({
@@ -72,7 +75,22 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
         </div>
 
         {/* ── Body ───────────────────────────────────────────────── */}
-        {isLoading ? (
+        {!isAuthenticated ? (
+          <div className="flex flex-1 flex-col items-center justify-center gap-4 px-8 text-center">
+            <ShoppingBagIcon className="h-9 w-9 text-muted-foreground/20" strokeWidth={1} />
+            <div>
+              <p className="text-sm font-medium">Entre para ver seu carrinho</p>
+              <p className="mt-1 text-xs text-muted-foreground">Salve suas peças favoritas e finalize a compra</p>
+            </div>
+            <Link
+              href="/auth/sign-in"
+              onClick={() => onOpenChange(false)}
+              className="mt-1 border-b border-border pb-0.5 text-xs text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
+            >
+              Entrar na conta
+            </Link>
+          </div>
+        ) : isLoading ? (
           <div className="flex flex-1 items-center justify-center">
             <span className="text-xs tracking-wider text-muted-foreground">A carregar...</span>
           </div>

@@ -154,7 +154,6 @@ const GenderPage = async ({ params, searchParams }: GenderPageProps) => {
                       key={product.id}
                       product={product}
                       isFavorited={wishlistIds.includes(product.id)}
-                      isAuthenticated={isAuthenticated}
                     />
                   ))}
                 </div>

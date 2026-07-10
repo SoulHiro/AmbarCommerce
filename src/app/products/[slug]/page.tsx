@@ -123,7 +123,6 @@ const ProductPage = async ({ params, searchParams }: ProductPageProps) => {
               <FavoriteButton
                 productId={product.id}
                 initialFavorited={isFavorited}
-                isAuthenticated={isAuthenticated}
                 className="top-4 right-4 bg-white/80 p-2 backdrop-blur-sm"
               />
             </div>
