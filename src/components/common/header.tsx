@@ -22,7 +22,7 @@ import { NAV_CATEGORIES, GENDER_LINKS } from '@/data/navigation'
 
 const PROFILE_MENU = [
   { label: 'Histórico de pedidos', icon: HistoryIcon, href: '/orders' },
-  { label: 'Favoritos', icon: HeartIcon, href: '/wishlist' },
+  { label: 'Favoritos', icon: HeartIcon, href: '/account/wishlist' },
   { label: 'Endereços', icon: MapPinIcon, href: '/addresses' },
 ]
 
@@ -120,7 +120,7 @@ export default function Header() {
               </PopoverContent>
             </Popover>
 
-            <Link href="/wishlist" aria-label="Favoritos"
+            <Link href="/account/wishlist" aria-label="Favoritos"
               className="text-muted-foreground transition-colors hover:text-foreground">
               <HeartIcon className="h-5 w-5" strokeWidth={1.5} />
             </Link>
