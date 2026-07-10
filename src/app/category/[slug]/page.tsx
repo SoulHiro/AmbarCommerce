@@ -45,7 +45,7 @@ const CategoryPage = async ({ params, searchParams }: CategoryPageProps) => {
 
   // Extrai cores disponíveis ANTES de filtrar (para sempre mostrar todas as opções)
   const availableColors = [
-    ...new Set(products.flatMap(p => p.variants.map(v => v.color.toLowerCase()))),
+    ...new Set(products.flatMap(p => p.variants.map(v => v.color))),
   ].sort()
 
   // ── Filtros ──────────────────────────────────────────────────────────────────
@@ -58,7 +58,7 @@ const CategoryPage = async ({ params, searchParams }: CategoryPageProps) => {
 
   if (coresParam.length > 0) {
     products = products.filter(p =>
-      p.variants.some(v => coresParam.includes(v.color.toLowerCase())),
+      p.variants.some(v => coresParam.includes(v.color)),
     )
   }
 

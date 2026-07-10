@@ -49,7 +49,7 @@ const GenderPage = async ({ params, searchParams }: GenderPageProps) => {
   })
 
   const availableColors = [
-    ...new Set(products.flatMap(p => p.variants.map(v => v.color.toLowerCase()))),
+    ...new Set(products.flatMap(p => p.variants.map(v => v.color))),
   ].sort()
 
   // ── Filtros ──────────────────────────────────────────────────────────────────
@@ -62,7 +62,7 @@ const GenderPage = async ({ params, searchParams }: GenderPageProps) => {
 
   if (coresParam.length > 0) {
     products = products.filter(p =>
-      p.variants.some(v => coresParam.includes(v.color.toLowerCase())),
+      p.variants.some(v => coresParam.includes(v.color)),
     )
   }
 
