@@ -1,31 +1,11 @@
 'use client'
 
+import { COLOR_HEX } from '@/data/colors'
 import { cn } from '@/lib/utils'
 import { SlidersHorizontalIcon, StarIcon, XIcon } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useState } from 'react'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet'
-
-// ─── Dados estáticos ──────────────────────────────────────────────────────────
-
-const COLOR_HEX: Record<string, string> = {
-  preto:        '#1c1c1a',
-  branco:       '#f2f0ed',
-  bege:         '#c8b89a',
-  cinza:        '#9a9896',
-  marinho:      '#1d2d44',
-  azul:         '#4a7fa5',
-  verde:        '#4a5e3a',
-  'verde-oliva':'#6b7340',
-  vinho:        '#6e2233',
-  vermelho:     '#b83232',
-  caramelo:     '#c67c3d',
-  rosa:         '#d4899a',
-  laranja:      '#d4823d',
-  amarelo:      '#c9a227',
-  nude:         '#d4b9a0',
-  off_white:    '#ede8e0',
-}
 
 const SORT_OPTIONS = [
   { value: 'relevancia',    label: 'Relevância'    },
@@ -145,7 +125,7 @@ export function FilterSidebar({ availableColors, className }: FilterSidebarProps
         <FilterSection label="Cor">
           <div className="flex flex-wrap gap-3">
             {availableColors.map(color => {
-              const hex        = COLOR_HEX[color.toLowerCase()] ?? '#888'
+              const hex        = COLOR_HEX[color] ?? '#888'
               const isSelected = coresAtivas.includes(color)
               const label      = color.charAt(0).toUpperCase() + color.slice(1)
               return (

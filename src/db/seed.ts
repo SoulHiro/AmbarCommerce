@@ -12,18 +12,18 @@ import {
 
 const productImages = {
   Mochila: {
-    Preta: [
+    Preto: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Acesso%CC%81rios/1/78f9fa3b_c793_472a_b183_e32495033da2.jpg',
     ],
-    Branca: [
+    Branco: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Acesso%CC%81rios/1/dacd9927_7287_4b14_a94f_b3f18c9c4d15.jpg',
     ],
   },
   'Meia Alta': {
-    Branca: [
+    Branco: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Acesso%CC%81rios/2/52c14d96_66fb_4b5e_b8a9_6b6cf21fb448.jpg',
     ],
-    Preta: [
+    Preto: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Acesso%CC%81rios/2/b38172d0_067a_4f03_975d_3c1c10cfc5f4.jpg',
     ],
   },
@@ -86,7 +86,7 @@ const productImages = {
     Verde: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Bermuda+%26+Shorts/4/7a8d5bd9_0de8_4247_9374_aadce84042ea.jpg',
     ],
-    Preta: [
+    Preto: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Bermuda+%26+Shorts/4/a277cf75_a377_4557_bb70_ef155651338e.jpg',
     ],
     Azul: [
@@ -97,7 +97,7 @@ const productImages = {
     Bege: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Calc%CC%A7as/1/1cef0dc4_e296_4809_94b6_66cb3164aa43.jpg',
     ],
-    Preta: [
+    Preto: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Calc%CC%A7as/1/611af69f_d7e7_4365_83a8_3aca96922d87.jpg',
     ],
     Vinho: [
@@ -105,10 +105,10 @@ const productImages = {
     ],
   },
   'Calça Knit': {
-    Preta: [
+    Preto: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Calc%CC%A7as/2/3e90bb34_eb11_4cc0_930a_f1a4dcb5a4a1.png',
     ],
-    Branca: [
+    Branco: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Calc%CC%A7as/2/d2766b69_177e_4c1d_abfe_93bb92c502f6.png',
     ],
     Azul: [
@@ -119,10 +119,10 @@ const productImages = {
     Bege: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Calc%CC%A7as/3/18a2f43f_a0bb_4d7e_a626_27c2f3b58017.jpg',
     ],
-    Branca: [
+    Branco: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Calc%CC%A7as/3/18a2f43f_a0bb_4d7e_a626_27c2f3b58017.jpg',
     ],
-    Preta: [
+    Preto: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Calc%CC%A7as/3/915f96a0_8714_42d7_8d2d_e897d5a9ce7a.jpg',
     ],
   },
@@ -130,7 +130,7 @@ const productImages = {
     Verde: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Calc%CC%A7as/4/1805ffd2_5fb7_454b_b098_2b00902025f3.jpg',
     ],
-    Preta: [
+    Preto: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Calc%CC%A7as/4/b97f4616_986e_4f1e_a577_905cb99eb213.jpg',
     ],
     Azul: [
@@ -141,15 +141,15 @@ const productImages = {
     Bege: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Camisetas/1/4f57e719_e120_4525_83d5_16955e27061b.png',
     ],
-    Preta: [
+    Preto: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Camisetas/1/a8a08dfb_a495_4c1b_9873_aa504cfe2fd7.webp',
     ],
-    Branca: [
+    Branco: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Camisetas/1/a8c7b41f_69f0_4894_994f_de01533d1161.jpg',
     ],
   },
   'Camiseta Run': {
-    Preta: [
+    Preto: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Camisetas/2/67db843e_691c_44a6_87b6_f5e01a1bcafe.webp',
     ],
     Azul: [
@@ -157,15 +157,15 @@ const productImages = {
     ],
   },
   'Camiseta Active': {
-    Branca: [
+    Branco: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Camisetas/3/c222d1e5_7cd7_4794_b644_57f47c9d344c.jpg',
     ],
-    Preta: [
+    Preto: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Camisetas/3/d4c0657c_c2c2_4356_a509_61cd9ecc4148.webp',
     ],
   },
   'Camiseta Nature': {
-    Preta: [
+    Preto: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Camisetas/4/caa3015c_61b3_4315_86b1_cc62ab1d2fee.jpg',
     ],
     Azul: [
@@ -200,7 +200,7 @@ const productImages = {
     Azul: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Jaquetas+%26+Moletons/4/134c9642_f032_4c6e_84a8_68de99e3dcb7.jpg',
     ],
-    Amarela: [
+    Amarelo: [
       'https://fsc-projects-static.s3.us-east-1.amazonaws.com/BEWEAR/products/Jaquetas+%26+Moletons/4/d8d78682_c480_40b0_97a1_93ab201b3287.jpg',
     ],
   },
@@ -299,8 +299,8 @@ const products = [
     categoryName: 'Acessórios',
     gender: 'unissex' as const,
     variants: [
-      { color: 'Preta', size: null, price: 12999 },
-      { color: 'Branca', size: null, price: 12999 },
+      { color: 'Preto', size: null, price: 12999 },
+      { color: 'Branco', size: null, price: 12999 },
     ],
   },
   {
@@ -309,8 +309,8 @@ const products = [
     categoryName: 'Acessórios',
     gender: 'unissex' as const,
     variants: [
-      { color: 'Branca', size: null, price: 1999 },
-      { color: 'Preta', size: null, price: 1999 },
+      { color: 'Branco', size: null, price: 1999 },
+      { color: 'Preto', size: null, price: 1999 },
     ],
   },
   {
@@ -380,7 +380,7 @@ const products = [
     gender: 'masculino' as const,
     variants: [
       { color: 'Verde', size: null, price: 8999 },
-      { color: 'Preta', size: null, price: 8999 },
+      { color: 'Preto', size: null, price: 8999 },
       { color: 'Azul', size: null, price: 8999 },
     ],
   },
@@ -394,7 +394,7 @@ const products = [
     gender: 'unissex' as const,
     variants: [
       { color: 'Bege', size: null, price: 15999 },
-      { color: 'Preta', size: null, price: 15999 },
+      { color: 'Preto', size: null, price: 15999 },
       { color: 'Vinho', size: null, price: 15999 },
     ],
   },
@@ -405,8 +405,8 @@ const products = [
     categoryName: 'Calças',
     gender: 'feminino' as const,
     variants: [
-      { color: 'Preta', size: null, price: 12999 },
-      { color: 'Branca', size: null, price: 12999 },
+      { color: 'Preto', size: null, price: 12999 },
+      { color: 'Branco', size: null, price: 12999 },
       { color: 'Azul', size: null, price: 12999 },
     ],
   },
@@ -418,8 +418,8 @@ const products = [
     gender: 'feminino' as const,
     variants: [
       { color: 'Bege', size: null, price: 13999 },
-      { color: 'Branca', size: null, price: 13999 },
-      { color: 'Preta', size: null, price: 13999 },
+      { color: 'Branco', size: null, price: 13999 },
+      { color: 'Preto', size: null, price: 13999 },
     ],
   },
   {
@@ -430,7 +430,7 @@ const products = [
     gender: 'masculino' as const,
     variants: [
       { color: 'Verde', size: null, price: 18999 },
-      { color: 'Preta', size: null, price: 18999 },
+      { color: 'Preto', size: null, price: 18999 },
       { color: 'Azul', size: null, price: 18999 },
     ],
   },
@@ -444,8 +444,8 @@ const products = [
     gender: 'masculino' as const,
     variants: [
       { color: 'Bege', size: null, price: 6999 },
-      { color: 'Preta', size: null, price: 6999 },
-      { color: 'Branca', size: null, price: 6999 },
+      { color: 'Preto', size: null, price: 6999 },
+      { color: 'Branco', size: null, price: 6999 },
     ],
   },
   {
@@ -455,7 +455,7 @@ const products = [
     categoryName: 'Camisetas',
     gender: 'unissex' as const,
     variants: [
-      { color: 'Preta', size: null, price: 5999 },
+      { color: 'Preto', size: null, price: 5999 },
       { color: 'Azul', size: null, price: 5999 },
     ],
   },
@@ -466,8 +466,8 @@ const products = [
     categoryName: 'Camisetas',
     gender: 'feminino' as const,
     variants: [
-      { color: 'Branca', size: null, price: 5499 },
-      { color: 'Preta', size: null, price: 5499 },
+      { color: 'Branco', size: null, price: 5499 },
+      { color: 'Preto', size: null, price: 5499 },
     ],
   },
   {
@@ -477,7 +477,7 @@ const products = [
     categoryName: 'Camisetas',
     gender: 'feminino' as const,
     variants: [
-      { color: 'Preta', size: null, price: 6499 },
+      { color: 'Preto', size: null, price: 6499 },
       { color: 'Azul', size: null, price: 6499 },
     ],
   },
@@ -523,7 +523,7 @@ const products = [
     gender: 'feminino' as const,
     variants: [
       { color: 'Azul', size: null, price: 25999 },
-      { color: 'Amarela', size: null, price: 25999 },
+      { color: 'Amarelo', size: null, price: 25999 },
     ],
   },
 
