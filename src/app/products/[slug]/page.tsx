@@ -25,7 +25,7 @@ interface ProductPageProps {
 
 const ProductPage = async ({ params, searchParams }: ProductPageProps) => {
   const { slug } = await params
-  const { cor } = await searchParams
+  const { cor, tamanho } = await searchParams
 
   const product = await db.query.productTable.findFirst({
     where: eq(productTable.slug, slug),
@@ -38,27 +38,41 @@ const ProductPage = async ({ params, searchParams }: ProductPageProps) => {
   if (!product) return notFound()
   if (!product.variants.length) return notFound()
 
-  // Variante ativa vem do searchParam; cai na primeira se não tiver
-  const activeVariant =
-    product.variants.find((v) => v.slug === cor) ?? product.variants[0]
-  const installmentPrice = formatCentsToBRL(
-    Math.round(activeVariant.priceInCents / 3)
-  )
+  // Cor: deduplica variantes para mostrar cada cor uma única vez
+  const colorOptions = Array.from(
+    new Map(product.variants.map(v => [v.color, v])).values()
+  ).map(v => ({ value: v.color, label: v.color, imageUrl: v.imageUrl }))
 
-  const dimensions = [
+  // Tamanho: valores únicos ordenados, apenas se o produto tiver sizes
+  const sizes = [...new Set(product.variants.map(v => v.size).filter(Boolean))]
+
+  const dimensions: Parameters<typeof VariantSelector>[0]['dimensions'] = [
     {
       key: 'cor',
       label: 'Cor',
       type: 'swatch' as const,
-      options: product.variants.map((v) => ({
-        value: v.slug,
-        label: v.color,
-        imageUrl: v.imageUrl,
-      })),
+      options: colorOptions,
     },
-    // Adicione novas dimensões aqui quando o schema crescer:
-    // { key: 'tamanho', label: 'Tamanho', type: 'pill', options: [...] },
   ]
+
+  if (sizes.length > 0) {
+    dimensions.push({
+      key: 'tamanho',
+      label: 'Tamanho',
+      type: 'pill' as const,
+      options: sizes.map(s => ({ value: s!, label: s! })),
+    })
+  }
+
+  // Variante ativa: cor (pelo nome) + tamanho opcional
+  const activeVariant =
+    product.variants.find(v => v.color === cor && (!tamanho || v.size === tamanho))
+    ?? product.variants.find(v => v.color === cor)
+    ?? product.variants[0]
+
+  const installmentPrice = formatCentsToBRL(
+    Math.round(activeVariant.priceInCents / 3)
+  )
 
   return (
     <>
