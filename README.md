@@ -2,7 +2,7 @@
 
 <br />
 
-# 🛍 WearCommerce · Âmbar
+# 🛍 Âmbar E-commerce
 
 **Ecommerce de moda editorial — curadoria acima de volume.**
 
@@ -194,8 +194,8 @@ src/
 ### 1. Clone e instale
 
 ```bash
-git clone https://github.com/seu-usuario/WearCommerce.git
-cd WearCommerce
+git clone https://github.com/SoulHiro/AmbarCommerce.git
+cd AmbarCommerce
 pnpm install
 ```
 
