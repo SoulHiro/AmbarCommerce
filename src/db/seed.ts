@@ -1,7 +1,14 @@
 import crypto from 'crypto'
 
 import { db } from '.'
-import { categoryTable, productTable, productVariantTable } from './schema'
+import {
+  cartItemTable,
+  cartTable,
+  categoryTable,
+  productTable,
+  productVariantTable,
+  wishlistTable,
+} from './schema'
 
 const productImages = {
   Mochila: {
@@ -240,12 +247,20 @@ const productImages = {
   },
 }
 
+const FOOTWEAR_SIZES = ['38', '39', '40', '41', '42']
+
 function generateSlug(name: string): string {
   return name
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '')
     .replace(/\s+/g, '-')
     .trim()
+}
+
+function footwearVariants(colors: string[], price: number) {
+  return colors.flatMap((color) =>
+    FOOTWEAR_SIZES.map((size) => ({ color, size, price }))
+  )
 }
 
 const categories = [
@@ -282,38 +297,42 @@ const products = [
     description:
       'Mochila resistente e confortável, ideal para o dia a dia e viagens.',
     categoryName: 'Acessórios',
+    gender: 'unissex' as const,
     variants: [
-      { color: 'Preta', price: 12999 },
-      { color: 'Branca', price: 12999 },
+      { color: 'Preta', size: null, price: 12999 },
+      { color: 'Branca', size: null, price: 12999 },
     ],
   },
   {
     name: 'Meia Alta',
     description: 'Meia alta de algodão, confortável e durável.',
     categoryName: 'Acessórios',
+    gender: 'unissex' as const,
     variants: [
-      { color: 'Branca', price: 1999 },
-      { color: 'Preta', price: 1999 },
+      { color: 'Branca', size: null, price: 1999 },
+      { color: 'Preta', size: null, price: 1999 },
     ],
   },
   {
     name: 'Boné Nocta',
     description: 'Boné Nocta com design moderno e ajuste confortável.',
     categoryName: 'Acessórios',
+    gender: 'unissex' as const,
     variants: [
-      { color: 'Preto', price: 8999 },
-      { color: 'Vinho', price: 8999 },
-      { color: 'Azul', price: 8999 },
+      { color: 'Preto', size: null, price: 8999 },
+      { color: 'Vinho', size: null, price: 8999 },
+      { color: 'Azul', size: null, price: 8999 },
     ],
   },
   {
     name: 'Boné Curvo',
     description: 'Boné com aba curva, estilo clássico e versátil.',
     categoryName: 'Acessórios',
+    gender: 'unissex' as const,
     variants: [
-      { color: 'Azul', price: 7999 },
-      { color: 'Bege', price: 7999 },
-      { color: 'Verde', price: 7999 },
+      { color: 'Azul', size: null, price: 7999 },
+      { color: 'Bege', size: null, price: 7999 },
+      { color: 'Verde', size: null, price: 7999 },
     ],
   },
 
@@ -323,20 +342,22 @@ const products = [
     description:
       'Shorts esportivo para atividades físicas, com tecido que absorve o suor.',
     categoryName: 'Bermuda & Shorts',
+    gender: 'masculino' as const,
     variants: [
-      { color: 'Preto', price: 6999 },
-      { color: 'Azul', price: 6999 },
-      { color: 'Verde', price: 6999 },
+      { color: 'Preto', size: null, price: 6999 },
+      { color: 'Azul', size: null, price: 6999 },
+      { color: 'Verde', size: null, price: 6999 },
     ],
   },
   {
     name: 'Shorts Core',
     description: 'Shorts casual confortável, perfeito para o dia a dia.',
     categoryName: 'Bermuda & Shorts',
+    gender: 'masculino' as const,
     variants: [
-      { color: 'Verde', price: 5999 },
-      { color: 'Preto', price: 5999 },
-      { color: 'Azul', price: 5999 },
+      { color: 'Verde', size: null, price: 5999 },
+      { color: 'Preto', size: null, price: 5999 },
+      { color: 'Azul', size: null, price: 5999 },
     ],
   },
   {
@@ -344,10 +365,11 @@ const products = [
     description:
       'Shorts com design moderno e confortável, ideal para diversas ocasiões.',
     categoryName: 'Bermuda & Shorts',
+    gender: 'masculino' as const,
     variants: [
-      { color: 'Marrom', price: 7499 },
-      { color: 'Preto', price: 7499 },
-      { color: 'Bege', price: 7499 },
+      { color: 'Marrom', size: null, price: 7499 },
+      { color: 'Preto', size: null, price: 7499 },
+      { color: 'Bege', size: null, price: 7499 },
     ],
   },
   {
@@ -355,10 +377,11 @@ const products = [
     description:
       'Bermuda premium com qualidade superior e design diferenciado.',
     categoryName: 'Bermuda & Shorts',
+    gender: 'masculino' as const,
     variants: [
-      { color: 'Verde', price: 8999 },
-      { color: 'Preta', price: 8999 },
-      { color: 'Azul', price: 8999 },
+      { color: 'Verde', size: null, price: 8999 },
+      { color: 'Preta', size: null, price: 8999 },
+      { color: 'Azul', size: null, price: 8999 },
     ],
   },
 
@@ -368,10 +391,11 @@ const products = [
     description:
       'Calça esportiva Nike Club, confortável e versátil para treinos e uso casual.',
     categoryName: 'Calças',
+    gender: 'unissex' as const,
     variants: [
-      { color: 'Bege', price: 15999 },
-      { color: 'Preta', price: 15999 },
-      { color: 'Vinho', price: 15999 },
+      { color: 'Bege', size: null, price: 15999 },
+      { color: 'Preta', size: null, price: 15999 },
+      { color: 'Vinho', size: null, price: 15999 },
     ],
   },
   {
@@ -379,10 +403,11 @@ const products = [
     description:
       'Calça de malha com tecido macio e confortável, ideal para relaxar.',
     categoryName: 'Calças',
+    gender: 'feminino' as const,
     variants: [
-      { color: 'Preta', price: 12999 },
-      { color: 'Branca', price: 12999 },
-      { color: 'Azul', price: 12999 },
+      { color: 'Preta', size: null, price: 12999 },
+      { color: 'Branca', size: null, price: 12999 },
+      { color: 'Azul', size: null, price: 12999 },
     ],
   },
   {
@@ -390,10 +415,11 @@ const products = [
     description:
       'Calça com design urbano e moderno, perfeita para o street style.',
     categoryName: 'Calças',
+    gender: 'feminino' as const,
     variants: [
-      { color: 'Bege', price: 13999 },
-      { color: 'Branca', price: 13999 },
-      { color: 'Preta', price: 13999 },
+      { color: 'Bege', size: null, price: 13999 },
+      { color: 'Branca', size: null, price: 13999 },
+      { color: 'Preta', size: null, price: 13999 },
     ],
   },
   {
@@ -401,10 +427,11 @@ const products = [
     description:
       'Calça Jordan com qualidade premium e design icônico da marca.',
     categoryName: 'Calças',
+    gender: 'masculino' as const,
     variants: [
-      { color: 'Verde', price: 18999 },
-      { color: 'Preta', price: 18999 },
-      { color: 'Azul', price: 18999 },
+      { color: 'Verde', size: null, price: 18999 },
+      { color: 'Preta', size: null, price: 18999 },
+      { color: 'Azul', size: null, price: 18999 },
     ],
   },
 
@@ -414,10 +441,11 @@ const products = [
     description:
       'Camiseta ACG com design técnico e material de alta qualidade.',
     categoryName: 'Camisetas',
+    gender: 'masculino' as const,
     variants: [
-      { color: 'Bege', price: 6999 },
-      { color: 'Preta', price: 6999 },
-      { color: 'Branca', price: 6999 },
+      { color: 'Bege', size: null, price: 6999 },
+      { color: 'Preta', size: null, price: 6999 },
+      { color: 'Branca', size: null, price: 6999 },
     ],
   },
   {
@@ -425,9 +453,10 @@ const products = [
     description:
       'Camiseta para corrida com tecido respirável e conforto superior.',
     categoryName: 'Camisetas',
+    gender: 'unissex' as const,
     variants: [
-      { color: 'Preta', price: 5999 },
-      { color: 'Azul', price: 5999 },
+      { color: 'Preta', size: null, price: 5999 },
+      { color: 'Azul', size: null, price: 5999 },
     ],
   },
   {
@@ -435,9 +464,10 @@ const products = [
     description:
       'Camiseta esportiva para atividades físicas com tecnologia Dri-FIT.',
     categoryName: 'Camisetas',
+    gender: 'feminino' as const,
     variants: [
-      { color: 'Branca', price: 5499 },
-      { color: 'Preta', price: 5499 },
+      { color: 'Branca', size: null, price: 5499 },
+      { color: 'Preta', size: null, price: 5499 },
     ],
   },
   {
@@ -445,9 +475,10 @@ const products = [
     description:
       'Camiseta com estampa inspirada na natureza, confortável e estilosa.',
     categoryName: 'Camisetas',
+    gender: 'feminino' as const,
     variants: [
-      { color: 'Preta', price: 6499 },
-      { color: 'Azul', price: 6499 },
+      { color: 'Preta', size: null, price: 6499 },
+      { color: 'Azul', size: null, price: 6499 },
     ],
   },
 
@@ -457,9 +488,10 @@ const products = [
     description:
       'Jaqueta corta-vento leve e resistente, ideal para atividades ao ar livre.',
     categoryName: 'Jaquetas & Moletons',
+    gender: 'masculino' as const,
     variants: [
-      { color: 'Preto', price: 19999 },
-      { color: 'Branco', price: 19999 },
+      { color: 'Preto', size: null, price: 19999 },
+      { color: 'Branco', size: null, price: 19999 },
     ],
   },
   {
@@ -467,9 +499,10 @@ const products = [
     description:
       'Jaqueta Windrunner com design clássico e proteção contra o vento.',
     categoryName: 'Jaquetas & Moletons',
+    gender: 'masculino' as const,
     variants: [
-      { color: 'Azul', price: 22999 },
-      { color: 'Bege', price: 22999 },
+      { color: 'Azul', size: null, price: 22999 },
+      { color: 'Bege', size: null, price: 22999 },
     ],
   },
   {
@@ -477,62 +510,53 @@ const products = [
     description:
       'Jaqueta com estilo urbano e moderno, perfeita para compor looks casuais.',
     categoryName: 'Jaquetas & Moletons',
+    gender: 'feminino' as const,
     variants: [
-      { color: 'Marrom', price: 17999 },
-      { color: 'Cinza', price: 17999 },
+      { color: 'Marrom', size: null, price: 17999 },
+      { color: 'Cinza', size: null, price: 17999 },
     ],
   },
   {
     name: 'Jaqueta Nike Club',
     description: 'Jaqueta Nike Club com qualidade premium e design atemporal.',
     categoryName: 'Jaquetas & Moletons',
+    gender: 'feminino' as const,
     variants: [
-      { color: 'Azul', price: 25999 },
-      { color: 'Amarela', price: 25999 },
+      { color: 'Azul', size: null, price: 25999 },
+      { color: 'Amarela', size: null, price: 25999 },
     ],
   },
 
-  // Tênis
+  // Tênis — color × size combinations
   {
     name: 'Tênis Nike Vomero',
     description:
       'Tênis Nike Vomero com tecnologia de amortecimento superior para corridas.',
     categoryName: 'Tênis',
-    variants: [
-      { color: 'Preto', price: 79999 },
-      { color: 'Branco', price: 79999 },
-      { color: 'Azul', price: 79999 },
-    ],
+    gender: 'unissex' as const,
+    variants: footwearVariants(['Preto', 'Branco', 'Azul'], 79999),
   },
   {
     name: 'Tênis Nike Panda',
     description: 'Tênis Nike com design Panda icônico, confortável e estiloso.',
     categoryName: 'Tênis',
-    variants: [
-      { color: 'Verde', price: 69999 },
-      { color: 'Azul', price: 69999 },
-      { color: 'Preto', price: 69999 },
-    ],
+    gender: 'unissex' as const,
+    variants: footwearVariants(['Verde', 'Azul', 'Preto'], 69999),
   },
   {
     name: 'Tênis Nike Air Force',
     description:
       'Tênis Nike Air Force 1, um clássico atemporal com design icônico.',
     categoryName: 'Tênis',
-    variants: [
-      { color: 'Preto', price: 89999 },
-      { color: 'Branco', price: 89999 },
-    ],
+    gender: 'unissex' as const,
+    variants: footwearVariants(['Preto', 'Branco'], 89999),
   },
   {
     name: 'Tênis Nike Dunk Low',
     description: 'Tênis Nike Dunk Low com design retrô e conforto moderno.',
     categoryName: 'Tênis',
-    variants: [
-      { color: 'Branco', price: 75999 },
-      { color: 'Preto', price: 75999 },
-      { color: 'Azul', price: 75999 },
-    ],
+    gender: 'unissex' as const,
+    variants: footwearVariants(['Branco', 'Preto', 'Azul'], 75999),
   },
 ]
 
@@ -540,14 +564,15 @@ async function main() {
   console.log('🌱 Iniciando o seeding do banco de dados...')
 
   try {
-    // Limpar dados existentes
     console.log('🧹 Limpando dados existentes...')
+    await db.delete(cartItemTable)
+    await db.delete(cartTable)
+    await db.delete(wishlistTable)
     await db.delete(productVariantTable)
     await db.delete(productTable)
     await db.delete(categoryTable)
     console.log('✅ Dados limpos com sucesso!')
 
-    // Inserir categorias primeiro
     const categoryMap = new Map<string, string>()
 
     console.log('📂 Criando categorias...')
@@ -566,7 +591,8 @@ async function main() {
       categoryMap.set(categoryData.name, categoryId)
     }
 
-    // Inserir produtos
+    let totalVariants = 0
+
     for (const productData of products) {
       const productId = crypto.randomUUID()
       const productSlug = generateSlug(productData.name)
@@ -586,9 +612,9 @@ async function main() {
         slug: productSlug,
         description: productData.description,
         categoryId: categoryId,
+        gender: productData.gender,
       })
 
-      // Inserir variantes do produto
       for (const variantData of productData.variants) {
         const variantId = crypto.randomUUID()
         const productKey = productData.name as keyof typeof productImages
@@ -597,28 +623,29 @@ async function main() {
             variantData.color as keyof (typeof productImages)[typeof productKey]
           ] || []
 
-        console.log(`  🎨 Criando variante: ${variantData.color}`)
+        const sizeSuffix = variantData.size ? `-${variantData.size}` : ''
+        const slugBase = `${productData.name}-${variantData.color}${sizeSuffix}`
 
         await db.insert(productVariantTable).values({
           id: variantId,
-          name: variantData.color,
+          name: variantData.size
+            ? `${variantData.color} — ${variantData.size}`
+            : variantData.color,
           productId: productId,
           color: variantData.color,
+          size: variantData.size,
           imageUrl: variantImages,
           priceInCents: variantData.price,
-          slug: generateSlug(`${productData.name}-${variantData.color}`),
+          slug: generateSlug(slugBase),
         })
+
+        totalVariants++
       }
     }
 
     console.log('✅ Seeding concluído com sucesso!')
     console.log(
-      `📊 Foram criadas ${categories.length} categorias, ${
-        products.length
-      } produtos com ${products.reduce(
-        (acc, p) => acc + p.variants.length,
-        0
-      )} variantes.`
+      `📊 Foram criadas ${categories.length} categorias, ${products.length} produtos com ${totalVariants} variantes.`
     )
   } catch (error) {
     console.error('❌ Erro durante o seeding:', error)
