@@ -7,10 +7,10 @@ import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 
 interface FavoriteButtonProps {
-  productId:       string
+  productId:        string
   initialFavorited: boolean
-  isAuthenticated: boolean
-  className?:      string
+  isAuthenticated:  boolean
+  className?:       string
 }
 
 export function FavoriteButton({
@@ -50,8 +50,8 @@ export function FavoriteButton({
       onClick={handleClick}
       disabled={isPending}
       className={cn(
-        'absolute right-2 top-2 cursor-pointer bg-white/90 p-1.5 transition-colors disabled:cursor-not-allowed',
-        favorited ? 'text-primary' : 'text-muted-foreground hover:text-primary',
+        'absolute right-2 top-2 z-10 cursor-pointer p-1 transition-colors disabled:cursor-not-allowed',
+        favorited ? 'text-primary' : 'text-muted-foreground/60 hover:text-primary',
         className,
       )}
     >
