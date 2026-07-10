@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { parseAsString, useQueryState } from 'nuqs'
 import { useRef, useState } from 'react'
 
 const ZOOM_FACTOR = 2.8
@@ -19,9 +19,7 @@ interface ProductGalleryProps {
 }
 
 export function ProductGallery({ images, productName }: ProductGalleryProps) {
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const cor = searchParams.get('cor')
+  const [cor, setCor] = useQueryState('cor', parseAsString)
 
   const activeImage = images.find(i => i.color === cor) ?? images[0]
 
@@ -59,9 +57,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
   }
 
   const selectColor = (color: string) => {
-    const params = new URLSearchParams(searchParams.toString())
-    params.set('cor', color)
-    router.push(`?${params.toString()}`, { scroll: false })
+    setCor(color, { scroll: false, shallow: false })
   }
 
   return (

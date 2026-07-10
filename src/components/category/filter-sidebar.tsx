@@ -2,9 +2,9 @@
 
 import { COLOR_HEX } from '@/data/colors'
 import { cn } from '@/lib/utils'
+import { parseAsArrayOf, parseAsInteger, parseAsString, useQueryStates } from 'nuqs'
+import { useCallback, useRef, useState } from 'react'
 import { SlidersHorizontalIcon, StarIcon, XIcon } from 'lucide-react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useCallback, useState } from 'react'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet'
 
 const SORT_OPTIONS = [
@@ -14,6 +14,15 @@ const SORT_OPTIONS = [
   { value: 'mais-recentes', label: 'Mais recentes' },
 ]
 
+// Parsers compartilhados — mantém a mesma estrutura de URL que os server components leem
+const FILTER_PARSERS = {
+  ordenar:      parseAsString.withDefault('relevancia'),
+  cores:        parseAsArrayOf(parseAsString, ',').withDefault([]),
+  'preco-min':  parseAsInteger,
+  'preco-max':  parseAsInteger,
+  avaliacao:    parseAsString,
+} as const
+
 // ─── Sidebar principal ────────────────────────────────────────────────────────
 
 interface FilterSidebarProps {
@@ -22,58 +31,58 @@ interface FilterSidebarProps {
 }
 
 export function FilterSidebar({ availableColors, className }: FilterSidebarProps) {
-  const router      = useRouter()
-  const searchParams = useSearchParams()
+  const [filters, setFilters] = useQueryStates(FILTER_PARSERS, {
+    scroll: false,
+    shallow: false,
+  })
 
-  const ordenar       = searchParams.get('ordenar')    ?? 'relevancia'
-  const coresAtivas   = searchParams.get('cores')?.split(',').filter(Boolean) ?? []
-  const avaliacaoAtiva = searchParams.get('avaliacao') ?? ''
+  const { ordenar, cores: coresAtivas, avaliacao: avaliacaoAtiva } = filters
+  const precoMinVal = filters['preco-min']
+  const precoMaxVal = filters['preco-max']
 
-  const [precoMin, setPrecoMin] = useState(searchParams.get('preco-min') ?? '')
-  const [precoMax, setPrecoMax] = useState(searchParams.get('preco-max') ?? '')
+  // Inputs controlados localmente — URL só atualiza 500ms após parar de digitar
+  const [inputMin, setInputMin] = useState(precoMinVal?.toString() ?? '')
+  const [inputMax, setInputMax] = useState(precoMaxVal?.toString() ?? '')
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const hasActiveFilters =
-    coresAtivas.length > 0 || precoMin || precoMax || avaliacaoAtiva || ordenar !== 'relevancia'
+    coresAtivas.length > 0 ||
+    precoMinVal != null ||
+    precoMaxVal != null ||
+    !!avaliacaoAtiva ||
+    ordenar !== 'relevancia'
 
-  const updateParam = useCallback(
-    (key: string, value: string | null) => {
-      const params = new URLSearchParams(searchParams.toString())
-      if (value === null || value === '') params.delete(key)
-      else params.set(key, value)
-      router.push(`?${params.toString()}`, { scroll: false })
+  const handlePriceChange = useCallback(
+    (field: 'preco-min' | 'preco-max', value: string) => {
+      if (field === 'preco-min') setInputMin(value)
+      else setInputMax(value)
+
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+      debounceRef.current = setTimeout(() => {
+        setFilters({ [field]: value ? Number(value) : null })
+      }, 500)
     },
-    [router, searchParams],
+    [setFilters],
   )
 
   const toggleColor = useCallback(
     (color: string) => {
-      const current = searchParams.get('cores')?.split(',').filter(Boolean) ?? []
-      const next    = current.includes(color)
-        ? current.filter(c => c !== color)
-        : [...current, color]
-      updateParam('cores', next.length > 0 ? next.join(',') : null)
+      const next = coresAtivas.includes(color)
+        ? coresAtivas.filter(c => c !== color)
+        : [...coresAtivas, color]
+      setFilters({ cores: next })
     },
-    [searchParams, updateParam],
+    [coresAtivas, setFilters],
   )
 
-  const applyPrice = useCallback(() => {
-    const params = new URLSearchParams(searchParams.toString())
-    if (precoMin) params.set('preco-min', precoMin)
-    else params.delete('preco-min')
-    if (precoMax) params.set('preco-max', precoMax)
-    else params.delete('preco-max')
-    router.push(`?${params.toString()}`, { scroll: false })
-  }, [router, searchParams, precoMin, precoMax])
-
   const clearAll = useCallback(() => {
-    router.push('?', { scroll: false })
-    setPrecoMin('')
-    setPrecoMax('')
-  }, [router])
+    setFilters({ ordenar: null, cores: [], 'preco-min': null, 'preco-max': null, avaliacao: null })
+    setInputMin('')
+    setInputMax('')
+  }, [setFilters])
 
   return (
     <div className={cn('flex flex-col', className)}>
-      {/* Limpar filtros */}
       {hasActiveFilters && (
         <button
           onClick={clearAll}
@@ -90,7 +99,7 @@ export function FilterSidebar({ availableColors, className }: FilterSidebarProps
           {SORT_OPTIONS.map(opt => (
             <button
               key={opt.value}
-              onClick={() => updateParam('ordenar', opt.value === 'relevancia' ? null : opt.value)}
+              onClick={() => setFilters({ ordenar: opt.value === 'relevancia' ? null : opt.value })}
               className={cn(
                 'cursor-pointer text-left text-sm transition-colors',
                 ordenar === opt.value
@@ -104,19 +113,21 @@ export function FilterSidebar({ availableColors, className }: FilterSidebarProps
         </div>
       </FilterSection>
 
-      {/* Preço */}
+      {/* Preço — debounce automático, sem botão "Aplicar" */}
       <FilterSection label="Preço">
-        <div className="flex flex-col gap-4">
-          <div className="flex gap-4">
-            <PriceInput label="De" value={precoMin} onChange={setPrecoMin} placeholder="0" />
-            <PriceInput label="Até" value={precoMax} onChange={setPrecoMax} placeholder="—" />
-          </div>
-          <button
-            onClick={applyPrice}
-            className="cursor-pointer self-start border-b border-border pb-0.5 text-xs text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
-          >
-            Aplicar
-          </button>
+        <div className="flex gap-4">
+          <PriceInput
+            label="De"
+            value={inputMin}
+            onChange={v => handlePriceChange('preco-min', v)}
+            placeholder="0"
+          />
+          <PriceInput
+            label="Até"
+            value={inputMax}
+            onChange={v => handlePriceChange('preco-max', v)}
+            placeholder="—"
+          />
         </div>
       </FilterSection>
 
@@ -127,13 +138,12 @@ export function FilterSidebar({ availableColors, className }: FilterSidebarProps
             {availableColors.map(color => {
               const hex        = COLOR_HEX[color] ?? '#888'
               const isSelected = coresAtivas.includes(color)
-              const label      = color.charAt(0).toUpperCase() + color.slice(1)
               return (
                 <button
                   key={color}
                   onClick={() => toggleColor(color)}
-                  title={label}
-                  aria-label={label}
+                  title={color}
+                  aria-label={color}
                   aria-pressed={isSelected}
                   className={cn(
                     'h-[18px] w-[18px] cursor-pointer rounded-full ring-offset-background transition-all',
@@ -157,7 +167,7 @@ export function FilterSidebar({ availableColors, className }: FilterSidebarProps
             return (
               <button
                 key={stars}
-                onClick={() => updateParam('avaliacao', isActive ? null : String(stars))}
+                onClick={() => setFilters({ avaliacao: isActive ? null : String(stars) })}
                 className={cn(
                   'flex cursor-pointer items-center gap-2 transition-colors',
                   isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',

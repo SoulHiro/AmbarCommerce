@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Noto_Sans, Playfair_Display } from 'next/font/google'
 import { Toaster } from '@/components/ui/sonner'
 import { cn } from '@/lib/utils'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import './globals.css'
 import ReactQueryProvider from '@/providers/react-query'
 
@@ -27,7 +28,9 @@ export default function RootLayout({
       className={cn('font-sans', notoSans.variable, playfairDisplay.variable)}
     >
       <body className="antialiased">
-        <ReactQueryProvider>{children}</ReactQueryProvider>
+        <NuqsAdapter>
+          <ReactQueryProvider>{children}</ReactQueryProvider>
+        </NuqsAdapter>
         <Toaster />
       </body>
     </html>
