@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { formatCentsToBRL } from '@/helpers/money'
 import { groupCartItemsByProduct, calcCartSubtotal, calcCartItemCount } from '@/helpers/cart'
 import { getCart } from '@/actions/get-cart'
+import { removeCartItem } from '@/actions/remove-cart-item'
 import { updateCartItem } from '@/actions/update-cart-item'
 import { ShoppingBagIcon } from 'lucide-react'
 import Image from 'next/image'
@@ -29,6 +30,11 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
   const { mutate: updateQty } = useMutation({
     mutationFn: (vars: { cartItemId: string; quantity: number }) =>
       updateCartItem(vars),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['cart'] }),
+  })
+
+  const { mutate: removeItem, isPending: isRemoving } = useMutation({
+    mutationFn: (cartItemId: string) => removeCartItem({ cartItemId }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['cart'] }),
   })
 
@@ -98,14 +104,21 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
                           {/* Info */}
                           <div className="flex flex-1 flex-col justify-between py-0.5">
                             <div className="flex items-start justify-between gap-2">
-                              <span className="text-[0.65rem] capitalize tracking-wide text-muted-foreground">
-                                {item.productVariant.color}
-                              </span>
+                              <div className="flex flex-col gap-0.5">
+                                <span className="text-[0.6rem] text-muted-foreground">
+                                  <span className="font-medium uppercase tracking-[0.12em]">Cor</span>
+                                  {'  '}{item.productVariant.color}
+                                </span>
+                                {item.productVariant.size && (
+                                  <span className="text-[0.6rem] text-muted-foreground">
+                                    <span className="font-medium uppercase tracking-[0.12em]">Tam</span>
+                                    {'  '}{item.productVariant.size}
+                                  </span>
+                                )}
+                              </div>
                               <RemoveItemButton
-                                onRemove={() => {
-                                  // TODO: chamar remove action e invalidar
-                                  queryClient.invalidateQueries({ queryKey: ['cart'] })
-                                }}
+                                onRemove={() => removeItem(item.id)}
+                                isPending={isRemoving}
                               />
                             </div>
 
