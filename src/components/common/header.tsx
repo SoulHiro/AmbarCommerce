@@ -6,7 +6,6 @@ import {
   HeartIcon,
   HistoryIcon,
   MapPinIcon,
-  SearchIcon,
   ShoppingBagIcon,
   UserIcon,
 } from 'lucide-react'
@@ -18,6 +17,7 @@ import { InnerContainer } from './page-container'
 import { CartSheet } from './cart'
 import { MobileSheet } from './mobile-sheet'
 import { MegaMenu } from './mega-menu'
+import { SearchDropdown } from './search-dropdown'
 import { NAV_CATEGORIES, GENDER_LINKS } from '@/data/navigation'
 
 const PROFILE_MENU = [
@@ -149,16 +149,7 @@ export default function Header() {
             ))}
           </nav>
 
-          <label className="group flex cursor-text items-center gap-2.5">
-            <SearchIcon className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground transition-colors group-focus-within:text-foreground"
-              strokeWidth={1.75} />
-            <input type="search" placeholder="Buscar na coleção..."
-              className={cn(
-                'w-52 bg-transparent pb-px text-sm text-foreground outline-none',
-                'border-b border-border transition-colors focus:border-foreground',
-                'placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden',
-              )} />
-          </label>
+          <SearchDropdown />
         </InnerContainer>
 
         {/* ── Mobile ─── */}
