@@ -176,3 +176,42 @@
     @apply font-sans;
   }
 }
+
+/* ─────────────────────────────────────────────────────────
+   Scrollbar — webkit (Chrome, Safari, Edge)
+───────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(0.88 0.018 74);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.72 0.040 60);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: oklch(1 0 0 / 15%);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.76 0.155 64 / 60%);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0.88 0.018 74) transparent;
+}
+
+.dark * {
+  scrollbar-color: oklch(1 0 0 / 15%) transparent;
+}
