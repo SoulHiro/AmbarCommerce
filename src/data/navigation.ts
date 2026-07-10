@@ -53,4 +53,8 @@ export const NAV_CATEGORIES: NavCategory[] = [
   },
 ]
 
-export const GENDER_LINKS = ['Mulher', 'Homem', 'Crianças']
+export const GENDER_LINKS = [
+  { label: 'Mulher',   href: '/gender/feminino'  },
+  { label: 'Homem',    href: '/gender/masculino' },
+  { label: 'Todos',    href: '/gender/unissex'   },
+]

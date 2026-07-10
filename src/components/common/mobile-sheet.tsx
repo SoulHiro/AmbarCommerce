@@ -29,13 +29,13 @@ export function MobileSheet() {
             </Link>
           ))}
           <div className="my-3 border-t border-border" />
-          {GENDER_LINKS.map(label => (
+          {GENDER_LINKS.map(link => (
             <Link
-              key={label}
-              href="#"
+              key={link.href}
+              href={link.href}
               className="py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
-              {label}
+              {link.label}
             </Link>
           ))}
         </nav>

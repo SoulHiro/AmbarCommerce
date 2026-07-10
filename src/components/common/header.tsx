@@ -45,10 +45,10 @@ export default function Header() {
         {/* ── Desktop Line 1: Gender / Logo / Icons ─── */}
         <InnerContainer className="relative hidden h-12 items-center md:flex">
           <nav className="flex items-center gap-6" aria-label="Navegação por gênero">
-            {GENDER_LINKS.map(label => (
-              <Link key={label} href="#"
+            {GENDER_LINKS.map(link => (
+              <Link key={link.href} href={link.href}
                 className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-                {label}
+                {link.label}
               </Link>
             ))}
           </nav>
