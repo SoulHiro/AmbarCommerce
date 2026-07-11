@@ -316,8 +316,8 @@ pnpm drizzle-kit studio     # abre UI visual do banco em localhost
 **Victor**
 Full-Stack Developer · Next.js · TypeScript · PostgreSQL
 
-[![GitHub](https://img.shields.io/badge/GitHub-@seu--usuario-181717?style=flat&logo=github)](https://github.com/SoulHiro)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-seu--perfil-0077B5?style=flat&logo=linkedin)](https://linkedin.com/in/victormts)
+[![GitHub](https://img.shields.io/badge/GitHub-@SoulHiro?style=flat&logo=github)](https://github.com/SoulHiro)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-victormts?style=flat&logo=linkedin)](https://linkedin.com/in/victormts)
 
 ---
 
