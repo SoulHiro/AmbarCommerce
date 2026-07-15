@@ -5,7 +5,6 @@ import { FavoriteButton } from '@/components/common/favorite-button'
 import { ProductGallery } from '@/components/product/product-gallery'
 import { VariantSelector } from '@/components/product/variant-selector'
 import { ProductItem } from '@/components/common/products-item'
-import { Button } from '@/components/ui/button'
 import { db } from '@/db'
 import { productTable } from '@/db/schema'
 import { formatCentsToBRL } from '@/helpers/money'
@@ -21,6 +20,7 @@ import Link from 'next/link'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { AddCartButton } from '@/components/product/add-cart-button'
+import { BuyNowButton } from '@/components/product/buy-now-button'
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>
@@ -163,9 +163,7 @@ const ProductPage = async ({ params, searchParams }: ProductPageProps) => {
 
             <div className="flex flex-col gap-3">
               <AddCartButton productVariantId={activeVariant.id} quantity={1} />
-              <Button variant="outline" size="lg" className="w-full">
-                Comprar agora
-              </Button>
+              <BuyNowButton productVariantId={activeVariant.id} />
             </div>
 
             <div className="grid grid-cols-3 gap-2 border-y border-border py-6 text-center">
