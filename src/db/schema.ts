@@ -12,6 +12,9 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core'
 
+export const paymentMethodEnum = pgEnum('payment_method', ['pix', 'credit_card', 'boleto'])
+export const orderStatusEnum = pgEnum('order_status', ['pending', 'paid', 'cancelled'])
+
 export const userTable = pgTable('user', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
@@ -89,6 +92,7 @@ export const userRelations = relations(userTable, ({ many, one }) => ({
   accounts: many(accountTable),
   shippingAddresses: many(shippingAddressTable),
   wishlist: many(wishlistTable),
+  orders: many(orderTable),
   cart: one(cartTable, {
     fields: [userTable.id],
     references: [cartTable.userId],
@@ -212,6 +216,7 @@ export const shippingAddressTable = pgTable('shipping_address', {
   number: text().notNull(),
   complement: text(),
 
+  savedForFuture: boolean('saved_for_future').notNull().default(true),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 })
 
@@ -272,6 +277,56 @@ export const cartItemRelations = relations(cartItemTable, ({ one }) => ({
   }),
   productVariant: one(productVariantTable, {
     fields: [cartItemTable.productVariantId],
+    references: [productVariantTable.id],
+  }),
+}))
+
+export const orderTable = pgTable('order', {
+  id: uuid().primaryKey().defaultRandom(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => userTable.id),
+  shippingAddressId: uuid('shipping_address_id')
+    .notNull()
+    .references(() => shippingAddressTable.id),
+  paymentMethod: paymentMethodEnum('payment_method').notNull(),
+  status: orderStatusEnum('status').notNull().default('pending'),
+  totalInCents: integer('total_in_cents').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+})
+
+export const orderRelations = relations(orderTable, ({ one, many }) => ({
+  user: one(userTable, {
+    fields: [orderTable.userId],
+    references: [userTable.id],
+  }),
+  shippingAddress: one(shippingAddressTable, {
+    fields: [orderTable.shippingAddressId],
+    references: [shippingAddressTable.id],
+  }),
+  items: many(orderItemTable),
+}))
+
+export const orderItemTable = pgTable('order_item', {
+  id: uuid().primaryKey().defaultRandom(),
+  orderId: uuid('order_id')
+    .notNull()
+    .references(() => orderTable.id),
+  productVariantId: uuid('product_variant_id')
+    .notNull()
+    .references(() => productVariantTable.id),
+  quantity: integer('quantity').notNull(),
+  priceInCents: integer('price_in_cents').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+})
+
+export const orderItemRelations = relations(orderItemTable, ({ one }) => ({
+  order: one(orderTable, {
+    fields: [orderItemTable.orderId],
+    references: [orderTable.id],
+  }),
+  productVariant: one(productVariantTable, {
+    fields: [orderItemTable.productVariantId],
     references: [productVariantTable.id],
   }),
 }))

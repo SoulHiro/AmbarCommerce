@@ -21,7 +21,7 @@ import { SearchDropdown } from './search-dropdown'
 import { NAV_CATEGORIES, GENDER_LINKS } from '@/data/navigation'
 
 const PROFILE_MENU = [
-  { label: 'Histórico de pedidos', icon: HistoryIcon, href: '/orders' },
+  { label: 'Pedidos', icon: HistoryIcon, href: '/orders' },
   { label: 'Favoritos', icon: HeartIcon, href: '/account/wishlist' },
   { label: 'Endereços', icon: MapPinIcon, href: '/addresses' },
 ]
