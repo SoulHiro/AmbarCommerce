@@ -1,18 +1,20 @@
 'use client'
 
 import { toggleWishlist } from '@/actions/toggle-wishlist'
+import { getWishlistIds } from '@/actions/get-wishlist-ids'
 import { authClient } from '@/lib/auth-client'
 import { cn } from '@/lib/utils'
 import { HeartIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
+import { useQuery } from '@tanstack/react-query'
 
 interface FavoriteButtonProps {
   productId:        string
-  initialFavorited: boolean
-  showLabel?:       boolean
-  className?:       string
-  onToggle?:        (favorited: boolean) => void
+  initialFavorited?: boolean
+  showLabel?:        boolean
+  className?:        string
+  onToggle?:         (favorited: boolean) => void
 }
 
 export function FavoriteButton({
@@ -22,9 +24,17 @@ export function FavoriteButton({
   className,
   onToggle,
 }: FavoriteButtonProps) {
-  const [favorited, setFavorited] = useState(initialFavorited)
-  const [isPending, startTransition] = useTransition()
   const { data: session } = authClient.useSession()
+  const { data: wishlistIds = [] } = useQuery({
+    queryKey: ['wishlist-ids'],
+    queryFn: () => getWishlistIds(),
+    enabled: !!session?.user,
+  })
+
+  const [favorited, setFavorited] = useState(
+    initialFavorited ?? wishlistIds.includes(productId),
+  )
+  const [isPending, startTransition] = useTransition()
   const router = useRouter()
 
   const handleClick = (e: React.MouseEvent) => {

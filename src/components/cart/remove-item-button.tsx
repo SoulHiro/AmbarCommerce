@@ -2,22 +2,20 @@
 
 import { Trash2Icon } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useCartMutations } from '@/hooks/use-cart-mutations'
 
 interface RemoveItemButtonProps {
-  onRemove: () => void
-  isPending?: boolean
+  itemId: string
   className?: string
 }
 
-export function RemoveItemButton({
-  onRemove,
-  isPending = false,
-  className,
-}: RemoveItemButtonProps) {
+export function RemoveItemButton({ itemId, className }: RemoveItemButtonProps) {
+  const { removeItem, isRemoving } = useCartMutations()
+
   return (
     <button
-      onClick={onRemove}
-      disabled={isPending}
+      onClick={() => removeItem(itemId)}
+      disabled={isRemoving}
       aria-label="Remover item"
       className={cn(
         'flex h-6 w-6 cursor-pointer items-center justify-center text-muted-foreground/50 transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30',

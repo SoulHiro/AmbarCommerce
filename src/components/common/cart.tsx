@@ -1,20 +1,18 @@
 'use client'
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { formatCentsToBRL } from '@/helpers/money'
-import { groupCartItemsByProduct, calcCartSubtotal, calcCartItemCount } from '@/helpers/cart'
+import {
+  groupCartItemsByProduct,
+  calcCartSubtotal,
+  calcCartItemCount,
+} from '@/helpers/cart'
 import { getCart } from '@/actions/get-cart'
-import { getWishlistIds } from '@/actions/get-wishlist-ids'
-import { removeCartItem } from '@/actions/remove-cart-item'
-import { updateCartItem } from '@/actions/update-cart-item'
 import { authClient } from '@/lib/auth-client'
 import { ShoppingBagIcon } from 'lucide-react'
-import { FavoriteButton } from './favorite-button'
-import Image from 'next/image'
 import Link from 'next/link'
 import { Sheet, SheetContent } from '../ui/sheet'
-import { QuantityControl } from '../cart/quantity-control'
-import { RemoveItemButton } from '../cart/remove-item-button'
+import { CartItem } from '../cart/cart-item'
 
 interface CartSheetProps {
   open: boolean
@@ -22,7 +20,6 @@ interface CartSheetProps {
 }
 
 export function CartSheet({ open, onOpenChange }: CartSheetProps) {
-  const queryClient = useQueryClient()
   const { data: session } = authClient.useSession()
   const isAuthenticated = !!session?.user
 
@@ -30,23 +27,6 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
     queryKey: ['cart'],
     queryFn: () => getCart(),
     enabled: open && isAuthenticated,
-  })
-
-  const { data: wishlistIds = [] } = useQuery({
-    queryKey: ['wishlist-ids'],
-    queryFn: () => getWishlistIds(),
-    enabled: isAuthenticated,
-  })
-
-  const { mutate: updateQty } = useMutation({
-    mutationFn: (vars: { cartItemId: string; quantity: number }) =>
-      updateCartItem(vars),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['cart'] }),
-  })
-
-  const { mutate: removeItem, isPending: isRemoving } = useMutation({
-    mutationFn: (cartItemId: string) => removeCartItem({ cartItemId }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['cart'] }),
   })
 
   const items = cart?.items ?? []
@@ -63,19 +43,26 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
         className="flex flex-col gap-0 p-0 sm:max-w-md"
       >
         {/* ── Header ─────────────────────────────────────────────── */}
-        <div className="flex items-center justify-between border-b border-border px-8 py-5">
-          <span className="font-sans text-[0.65rem] font-semibold tracking-[0.22em] text-foreground uppercase">
+        <div className="border-border flex items-center justify-between border-b px-8 py-5">
+          <span className="text-foreground font-sans text-[0.65rem] font-semibold tracking-[0.22em] uppercase">
             Carrinho
             {hasItems && (
-              <span className="ml-2 text-muted-foreground">({itemCount})</span>
+              <span className="text-muted-foreground ml-2">({itemCount})</span>
             )}
           </span>
           <button
             onClick={() => onOpenChange(false)}
             aria-label="Fechar carrinho"
-            className="flex h-8 w-8 cursor-pointer items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground flex h-8 w-8 cursor-pointer items-center justify-center transition-colors"
           >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.25">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.25"
+            >
               <line x1="1" y1="1" x2="13" y2="13" />
               <line x1="13" y1="1" x2="1" y2="13" />
             </svg>
@@ -85,22 +72,29 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
         {/* ── Body ───────────────────────────────────────────────── */}
         {!isAuthenticated ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-4 px-8 text-center">
-            <ShoppingBagIcon className="h-9 w-9 text-muted-foreground/20" strokeWidth={1} />
+            <ShoppingBagIcon
+              className="text-muted-foreground/20 h-9 w-9"
+              strokeWidth={1}
+            />
             <div>
               <p className="text-sm font-medium">Entre para ver seu carrinho</p>
-              <p className="mt-1 text-xs text-muted-foreground">Salve suas peças favoritas e finalize a compra</p>
+              <p className="text-muted-foreground mt-1 text-xs">
+                Salve suas peças favoritas e finalize a compra
+              </p>
             </div>
             <Link
               href="/auth/sign-in"
               onClick={() => onOpenChange(false)}
-              className="mt-1 border-b border-border pb-0.5 text-xs text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
+              className="border-border text-muted-foreground hover:border-foreground hover:text-foreground mt-1 border-b pb-0.5 text-xs transition-colors"
             >
               Entrar na conta
             </Link>
           </div>
         ) : isLoading ? (
           <div className="flex flex-1 items-center justify-center">
-            <span className="text-xs tracking-wider text-muted-foreground">A carregar...</span>
+            <span className="text-muted-foreground text-xs tracking-wider">
+              A carregar...
+            </span>
           </div>
         ) : hasItems ? (
           <>
@@ -108,84 +102,29 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
             <div className="flex-1 overflow-y-auto">
               {groups.map((group, groupIdx) => (
                 <div key={group.product.id}>
-                  <div className="px-8 pb-5 pt-7">
-                    <p className="mb-5 text-xs font-medium leading-none text-foreground">
+                  <div className="px-8 pt-7 pb-5">
+                    <p className="text-foreground mb-5 text-xs leading-none font-medium">
                       {group.product.name}
                     </p>
 
                     <div className="flex flex-col gap-5">
                       {group.variants.map((item) => (
-                        <div key={item.id} className="flex gap-4">
-                          {/* Thumbnail */}
-                          <div className="relative h-20 w-16 flex-shrink-0 overflow-hidden bg-muted">
-                            <Image
-                              src={item.productVariant.imageUrl}
-                              alt={`${group.product.name} — ${item.productVariant.color}`}
-                              fill
-                              className="object-cover object-center"
-                              sizes="64px"
-                            />
-                          </div>
-
-                          {/* Info */}
-                          <div className="flex flex-1 flex-col justify-between py-0.5">
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="flex flex-col gap-0.5">
-                                <span className="text-[0.6rem] text-muted-foreground">
-                                  <span className="font-medium uppercase tracking-[0.12em]">Cor</span>
-                                  {'  '}{item.productVariant.color}
-                                </span>
-                                {item.productVariant.size && (
-                                  <span className="text-[0.6rem] text-muted-foreground">
-                                    <span className="font-medium uppercase tracking-[0.12em]">Tam</span>
-                                    {'  '}{item.productVariant.size}
-                                  </span>
-                                )}
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <FavoriteButton
-                                  productId={group.product.id}
-                                  initialFavorited={wishlistIds.includes(group.product.id)}
-                                  className="p-1"
-                                />
-                                <RemoveItemButton
-                                  onRemove={() => removeItem(item.id)}
-                                  isPending={isRemoving}
-                                />
-                              </div>
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                              <QuantityControl
-                                quantity={item.quantity}
-                                onDecrease={() =>
-                                  updateQty({ cartItemId: item.id, quantity: item.quantity - 1 })
-                                }
-                                onIncrease={() =>
-                                  updateQty({ cartItemId: item.id, quantity: item.quantity + 1 })
-                                }
-                              />
-                              <span className="text-sm font-medium tabular-nums">
-                                {formatCentsToBRL(item.productVariant.priceInCents * item.quantity)}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
+                        <CartItem key={item.id} item={item} />
                       ))}
                     </div>
                   </div>
 
                   {groupIdx < groups.length - 1 && (
-                    <div className="mx-8 border-t border-border" />
+                    <div className="border-border mx-8 border-t" />
                   )}
                 </div>
               ))}
             </div>
 
             {/* ── Footer ─────────────────────────────────────────── */}
-            <div className="border-t border-border px-8 pb-8 pt-6">
+            <div className="border-border border-t px-8 pt-6 pb-8">
               <div className="mb-6 flex items-baseline justify-between">
-                <span className="text-[0.65rem] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
+                <span className="text-muted-foreground text-[0.65rem] font-semibold tracking-[0.18em] uppercase">
                   Subtotal
                 </span>
                 <span className="text-base font-medium tabular-nums">
@@ -194,14 +133,14 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
               </div>
 
               <Link
-                href="/checkout"
+                href="/cart/identification"
                 onClick={() => onOpenChange(false)}
-                className="flex w-full items-center justify-center bg-primary py-3.5 text-[0.7rem] font-semibold tracking-[0.18em] text-primary-foreground uppercase transition-opacity hover:opacity-90"
+                className="bg-primary text-primary-foreground flex w-full items-center justify-center py-3.5 text-[0.7rem] font-semibold tracking-[0.18em] uppercase transition-opacity hover:opacity-90"
               >
                 Finalizar compra
               </Link>
 
-              <p className="mt-3 text-center text-[0.6rem] tracking-wide text-muted-foreground">
+              <p className="text-muted-foreground mt-3 text-center text-[0.6rem] tracking-wide">
                 Frete calculado no checkout
               </p>
             </div>
@@ -209,15 +148,20 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
         ) : (
           /* ── Empty state ─────────────────────────────────────── */
           <div className="flex flex-1 flex-col items-center justify-center gap-4 px-8 text-center">
-            <ShoppingBagIcon className="h-9 w-9 text-muted-foreground/20" strokeWidth={1} />
+            <ShoppingBagIcon
+              className="text-muted-foreground/20 h-9 w-9"
+              strokeWidth={1}
+            />
             <div>
               <p className="text-sm font-medium">Carrinho vazio</p>
-              <p className="mt-1 text-xs text-muted-foreground">Adicione peças para começar</p>
+              <p className="text-muted-foreground mt-1 text-xs">
+                Adicione peças para começar
+              </p>
             </div>
             <Link
               href="/products"
               onClick={() => onOpenChange(false)}
-              className="mt-1 border-b border-border pb-0.5 text-xs text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
+              className="border-border text-muted-foreground hover:border-foreground hover:text-foreground mt-1 border-b pb-0.5 text-xs transition-colors"
             >
               Ver coleção
             </Link>
